@@ -73,137 +73,34 @@ File read.
 
 There are 6 modes in total:
 
-- **🆕 Task**
+- **🆕 Task**: See [NEW-TASK-MODE.md](NEW-TASK-MODE.md) for a detailed description.
     - **ID**: `new-task`
-    - **Description**: The mode responsible for the initial processing of a user's complex request and enriching it with extended/additional information. It analyzes the request, improves it, and passes it to the orchestrator for further processing.
-    - **System Prompt**: in the `.roo/system-prompt-new-task` file.
-    - **Available Tools**:
-        - execute_command: Executes a CLI command.
-        - read_file: Reads the content of a file.
-        - search_files: Performs a search across files using regular expressions.
-        - list_files: Lists files and directories.
-        - list_code_definition_names: Lists the names of definitions (functions, classes, etc.) in source code.
-        - new_task: Delegates task execution to the orchestrator.
-        - attempt_completion: Reports successful task completion.
-        - complete_with_failure: Reports inability to complete the task or partial/unsuccessful completion.
-    - **Available MCP Servers**: none.
     - **Can Spawn Tasks for Modes:**
         - orchestrator
 
-- **🪃 Orchestrator**:
+- **🪃 Orchestrator**: See [ORCHESTRATOR-MODE.md](ORCHESTRATOR-MODE.md) for a detailed description.
     - **ID**: `orchestrator`
-    - **Description**: The mode responsible for coordinating task execution among different mode-agents. It receives tasks from the Task mode and delegates them to other modes based on their specialization.
-    - **System Prompt**: in the `.roo/system-prompt-orchestrator` file.
-    - **Available Tools**:
-        - read_file: Reads the content of a file.
-        - search_files: Performs a search across files using regular expressions.
-        - list_files: Lists files and directories.
-        - use_mcp_tool: Uses an MCP server tool.
-        - ask_followup_question: Asks the user a clarifying question.
-        - new_task: Delegates task execution to another mode-agent.
-        - attempt_completion: Reports successful task completion.
-    - **Available MCP Servers**:
-        - `context7`
-        - `repomix`
-        - `tavily`
     - **Can Spawn Tasks for Modes:**
         - architect
         - code
         - debug
         - test
 
-- **🏗️ Architect**:
+- **🏗️ Architect**: See [ARCHITECT-MODE.md](ARCHITECT-MODE.md) for a detailed description.
     - **ID**: `architect`
-    - **Description**: The mode responsible for system design and architecture. It analyzes requirements and creates architectural solutions, which are then passed to other modes for implementation.
-    - **System Prompt**: in the `.roo/system-prompt-architect` file.
-    - **Available Tools**:
-        - read_file: Reads the content of a file.
-        - search_files: Performs a search across files using regular expressions.
-        - list_files: Lists files and directories.
-        - list_code_definition_names: Lists the names of definitions (functions, classes, etc.) in source code.
-        - use_mcp_tool: Uses an MCP server tool.
-        - access_mcp_resource: Accesses an MCP server resource.
-        - ask_followup_question: Asks the user a clarifying question.
-        - attempt_completion: Reports successful task completion.
-    - **Available MCP Servers**: 
-        - `context7`
-        - `repomix`
-        - `tavily`
     - **Can Spawn Tasks for Modes:** none.
 
-- **💻 Code**:
+- **💻 Code**: See [CODE-MODE.md](CODE-MODE.md) for a detailed description.
     - **ID**: `code`
-    - **Description**: The mode responsible for writing and editing code. It uses tools and APIs to perform code-related tasks.
-    - **System Prompt**: in the `.roo/system-prompt-code` file.
-    - **Available Tools**:
-        - `read_file`
-        - `search_files`
-        - `list_files`
-        - `list_code_definition_names`
-        - `apply_diff`
-        - `write_to_file`
-        - `insert_content`
-        - `search_and_replace`
-        - `execute_command`
-        - `use_mcp_tool`
-        - `access_mcp_resource`
-        - `ask_followup_question`
-        - `attempt_completion`
-        - `new_task` (only debug mode)
-    - **Available MCP Servers**:
-        - `context7`
-        - `repomix`
-        - `tavily`
     - **Can Spawn Tasks for Modes:**
         - debug
 
-- **🪲 Debug**:
+- **🪲 Debug**: See [DEBUG-MODE.md](DEBUG-MODE.md) for a detailed description.
     - **ID**: `debug`
-    - **Description**: The mode responsible for debugging and fixing errors in the code. It uses tools and APIs to perform debugging-related tasks.
-    - **System Prompt**: in the `.roo/system-prompt-debug` file.
-    - **Available Tools**:
-        - `read_file`
-        - `search_files`
-        - `list_files`
-        - `list_code_definition_names`
-        - `apply_diff`
-        - `write_to_file`
-        - `insert_content`
-        - `search_and_replace`
-        - `execute_command`
-        - `use_mcp_tool`
-        - `access_mcp_resource`
-        - `ask_followup_question`
-        - `attempt_completion`
-    - **Available MCP Servers**:
-        - `context7`
-        - `repomix`
-        - `tavily`
     - **Can Spawn Tasks for Modes:** none.
 
-- **🔍 Test**:
+- **🔍 Test**: See [TEST-MODE.md](TEST-MODE.md) for a detailed description.
     - **ID**: `test`
-    - **Description**: The mode responsible for testing and verifying code, particularly after changes in `code` and `debug` modes. It uses tools and APIs to perform testing-related tasks.
-    - **System Prompt**: in the `.roo/system-prompt-test` file.
-    - **Available Tools**:
-        - `read_file`
-        - `search_files`
-        - `list_files`
-        - `list_code_definition_names`
-        - `apply_diff`
-        - `write_to_file`
-        - `insert_content`
-        - `search_and_replace`
-        - `execute_command`
-        - `use_mcp_tool`
-        - `access_mcp_resource`
-        - `ask_followup_question`
-        - `new_task` (only debug mode)
-        - `attempt_completion`
-    - **Available MCP Servers**:
-        - `context7`
-        - `repomix`
-        - `tavily`
     - **Can Spawn Tasks for Modes:**
         - debug 
 
