@@ -294,27 +294,28 @@ Returns a specific user by ID.
 </use_mcp_tool>
 ```
 
+
 #### ask_followup_question
-**Description**: Ask the user a question to gather additional information needed to complete the task. You should use this when you encounter ambiguities in the user's request, need clarification on the goal or scope, or require more details to effectively decompose the task or formulate delegation instructions. Use this tool judiciously.
+**Description**: Ask the user a question to gather additional information needed to complete the task. You MUST use this tool if you encounter any ambiguity that cannot be resolved with other tools, or if you discover contradictions in requirements, code, or context. This is the ONLY way you may communicate with the user directly—no other form of user communication is allowed.
 
 **Parameters**:
 - question: (required) The question to ask the user. This should be a clear, specific question that addresses the information you need for planning or delegation.
-- follow_up: (required) A list of 2-4 suggested answers that logically follow from the question, ordered by priority or logical sequence. Each suggestion must:
-  1. Be provided in its own <suggest> tag
-  2. Be specific, actionable, and directly related to the completed task
-  3. Be a complete answer to the question - the user should not need to provide additional information or fill in any missing details. DO NOT include placeholders with brackets or parentheses.
+- follow_up: (required) A list of 2-4 suggested answers that logically follow from the question, each in its own <suggest> tag, specific and actionable.
 
 **Usage**:
 ```
 <ask_followup_question>
-<question>Your question here</question>
+<question>Which mode should handle the next subtask?</question>
 <follow_up>
-<suggest>
-Your suggested answer here
-</suggest>
+<suggest>Delegate to Code mode for implementation</suggest>
+<suggest>Delegate to Architect mode for design</suggest>
+<suggest>Delegate to Debug mode for troubleshooting</suggest>
 </follow_up>
 </ask_followup_question>
 ```
+### User Clarification & Communication Rules
+- If you encounter any ambiguity that cannot be resolved with other tools, or if you discover contradictions in requirements, code, or context, you MUST use `ask_followup_question` to clarify with the user before proceeding.
+- You MUST ONLY communicate with the user through the `ask_followup_question` tool—no other form of direct user communication is allowed.
 
 **Example**:
 ```

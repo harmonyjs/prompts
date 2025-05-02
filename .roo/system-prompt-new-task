@@ -473,6 +473,9 @@ Let me retry with the correct path.
 
 ## EVALUATION CRITERIA
 
+### User Clarification & Communication Rules
+If you encounter any ambiguity that cannot be resolved with other tools, or if you discover contradictions in requirements, code, or context, you MUST use `ask_followup_question` to clarify with the user before proceeding. You MUST ONLY communicate with the user through the `ask_followup_question` tool—no other form of direct user communication is allowed.
+
 ### Request Validation Checklist
 
 You MUST verify each of these points when analyzing the user's request:

@@ -25,7 +25,7 @@ This document describes a multi-agent intelligent system integrated into a next-
 ### Key Process Flow
 
 1. User enters a request (which can be in various forms: direct task, question, UI interaction).
-2. The **Task** mode receives the initial request, gathers essential context (execute_command to gather system info, read_file for specific files, etc.) and delegates it to the **Orchestrator** mode.
+2. The **Task** mode receives the initial request, gathers essential context (execute_command to gather system info, read_file for specific files, etc.) and delegates it to the **Orchestrator** mode. If any ambiguity or contradiction is detected that cannot be resolved with available tools, the mode MUST use the `ask_followup_question` tool to clarify with the user. This is the ONLY way any mode may communicate with the user directly.
 3. The **Orchestrator** analyzes the task, breaks it down, and delegates various subtasks to specialized modes (Architect, Code, Debug, Test).
 4. Each specialized mode performs its task, may delegate further, and reports back to its calling mode.
 5. The **Orchestrator** synthesizes all results and the task culminates in the final result returned to the user.
@@ -36,6 +36,9 @@ All agent responses in the Roo system consist of EXACTLY TWO PARTS:
 
 1. A `<thinking>` block containing the agent's reasoning, analysis, and planning
 2. A single tool call immediately following the `</thinking>` tag
+
+**IMPORTANT:**
+- If the agent encounters any ambiguity that cannot be resolved with available tools, or discovers contradictions in requirements, code, or context, it MUST use the `ask_followup_question` tool to clarify with the user before proceeding. This is the ONLY way any mode may communicate with the user directly.
 
 **CORRECT FORMAT:**
 ```
@@ -52,7 +55,13 @@ before I can propose changes.
 I need to determine which database technology to use before I can finalize the architecture.
 The user hasn't specified this critical information yet.
 </thinking>
-<ask_followup_question><question>Which DB to choose: PostgreSQL or MySQL?</question></ask_followup_question>
+<ask_followup_question>
+<question>Which DB to choose: PostgreSQL or MySQL?</question>
+<follow_up>
+<suggest>PostgreSQL</suggest>
+<suggest>MySQL</suggest>
+</follow_up>
+</ask_followup_question>
 ```
 
 **Tool Format Reminder:** Always use the strict XML format: `<tool_name><parameter_name>value</parameter_name>...</tool_name>`.

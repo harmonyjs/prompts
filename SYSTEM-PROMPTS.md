@@ -158,6 +158,38 @@ graph TD
 
 The effectiveness of Roo hinges on high-quality system prompts. Follow these best practices:
 
+### User Communication Policy
+
+**Strict User Communication Rule:**
+
+- All user communication **MUST** be performed exclusively via the `ask_followup_question` tool.
+- If the agent encounters any ambiguity, contradiction, or missing information in the user request or task context that cannot be resolved using available tools, it is **MANDATORY** to use `ask_followup_question` to seek clarification from the user.
+- **No other form of user communication is permitted.** Agents must not output direct messages, explanations, or any text to the user except through the `ask_followup_question` tool.
+- This rule applies to all modes and in all situations, including error handling, task clarification, and edge cases.
+
+**Correct Example:**
+```
+<thinking>
+The user request is ambiguous: it is unclear which file should be updated. I will ask the user for clarification using the ask_followup_question tool.
+</thinking>
+<ask_followup_question>
+<question>Could you specify which file you want to update?</question>
+</ask_followup_question>
+```
+
+**Incorrect Example:**
+```
+<thinking>
+The user request is ambiguous: it is unclear which file should be updated. Please clarify which file you want to update.
+</thinking>
+<attempt_completion>
+<result>Cannot proceed: file not specified.</result>
+</attempt_completion>
+```
+
+**Checklist Addition:**
+- [ ] **User Communication Policy:** The prompt explicitly requires the use of `ask_followup_question` for all ambiguities, contradictions, or missing information, and forbids any other form of user communication.
+
 ### Structuring System Prompts
 
 Ensure prompts contain:
@@ -224,6 +256,9 @@ Detailed analysis and reasoning...
 - No text between the `</thinking>` tag and the tool call.
 - No text after the closing tag of the tool call.
 - Do not wrap the tool call in markdown code fences.
+
+**Special Note:**
+If user communication is required (e.g., to resolve ambiguity, contradiction, or missing information), the **only** allowed tool is `ask_followup_question`. All other forms of user communication are strictly forbidden.
 
 Every prompt must include both correct and incorrect examples of this format to reinforce proper usage.
 
@@ -305,7 +340,7 @@ Prompts explicitly define these strategies:
 
 -   **Instruction**: Define criteria for when to give up after retries fail or when an error is clearly unrecoverable.
 -   **Tools**: Specify which tool to use to signal failure (e.g., `complete_with_failure` for Task mode).
--   **Alternative Actions**: Instruct modes like Orchestrator to consider `ask_followup_question` or adapting the plan instead of immediate failure if appropriate.
+   **Alternative Actions**: Instruct all modes that if an ambiguity, contradiction, or missing information is encountered that cannot be resolved with available tools, the **only** allowed way to communicate with the user is via the `ask_followup_question` tool. No other user communication is permitted. Modes may also adapt the plan if appropriate.
 
 #### Re-delegation (Orchestrator Specific)
 
@@ -325,7 +360,8 @@ Prompts should guide the LLM on *when* to apply each strategy:
 
 -   **Retry**: Error seems correctable (typo, temporary network issue) AND attempt count < 3.
 -   **Adapt/Ask/Re-delegate (Orchestrator)**: Subtask result is unsatisfactory but potentially fixable with different instructions or more context.
--   **Fail**: Error is fundamental (file definitely missing), retries exhausted, necessary info unobtainable, initial analysis shows task is impossible.
+   -   **Fail**: Error is fundamental (file definitely missing), retries exhausted, necessary info unobtainable, initial analysis shows task is impossible.
+   -   **Ask (All Modes)**: If ambiguity, contradiction, or missing information is detected and cannot be resolved with available tools, use `ask_followup_question` as the only allowed method to communicate with the user.
 
 By embedding these mechanisms directly into the system prompts, Roo ensures consistent and robust handling of common issues across its different modes.
 
