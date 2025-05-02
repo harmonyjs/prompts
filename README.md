@@ -60,7 +60,7 @@ The text part of the response (if present) is written in plain text without any 
 File read.
 
 <!-- INCORRECT: Tool wrapped in Markdown -->
-```xml
+\```xml
 <read_file><path>config.json</path></read_file>
 \```
 
@@ -279,49 +279,50 @@ The `message` in the `new_task` tool must be structured as follows:
 ```
 
 For example:
+
 ##### Example Workflow (Code)
 
-    1.  **Receiving Task (from Orchestrator):**
-        ```
-        💻 Implement user profile update endpoint
+1.  **Receiving Task (from Orchestrator):**
+    ```
+    💻 Implement user profile update endpoint
 
-        Create a new endpoint PUT /api/users/profile that accepts user profile data (name, email) and updates the authenticated user's record in the database. Use the existing database connection from `db.js` and validation logic from `validators.js`.
+    Create a new endpoint PUT /api/users/profile that accepts user profile data (name, email) and updates the authenticated user's record in the database. Use the existing database connection from `db.js` and validation logic from `validators.js`.
 
-        Context: Project uses Express.js, user ID is available in `req.user.id`. Relevant files: `routes/users.js`, `models/user.js`, `lib/db.js`, `lib/validators.js`.
+    Context: Project uses Express.js, user ID is available in `req.user.id`. Relevant files: `routes/users.js`, `models/user.js`, `lib/db.js`, `lib/validators.js`.
 
-        🆕 Add user profile editing feature
-        └── 🪃 Orchestrate profile editing implementation
-            └── 💻 Implement user profile update endpoint
-                ^ we are here
+    🆕 Add user profile editing feature
+    └── 🪃 Orchestrate profile editing implementation
+        └── 💻 Implement user profile update endpoint
+            ^ we are here
 
-        Ensure proper error handling for database errors and validation failures. Return the updated user profile on success.
-        ```
+    Ensure proper error handling for database errors and validation failures. Return the updated user profile on success.
+    ```
 
-    2.  **Analysis and Planning (`<thinking>`):**
-        ```xml
-        <thinking>
-        Task: Implement PUT /api/users/profile.
-        1. Read existing files to understand the structure: `routes/users.js`, `models/user.js`, `lib/validators.js`.
-        2. Plan changes:
-           - Add a new route `router.put('/profile', ...)` in `routes/users.js`.
-           - Inside the route:
-             - Get `userId` from `req.user.id`.
-             - Get `name`, `email` from `req.body`.
-             - Validate `name` and `email` using `validators.js`.
-             - Call model method `User.updateProfile(userId, { name, email })`.
-             - Handle validation and DB errors.
-             - Return updated profile or error.
-           - Check/add `updateProfile` method in `models/user.js`.
-        3. Start by reading `routes/users.js`.
-        </thinking>
-        ```
+2.  **Analysis and Planning (`<thinking>`):**
+    ```xml
+    <thinking>
+    Task: Implement PUT /api/users/profile.
+    1. Read existing files to understand the structure: `routes/users.js`, `models/user.js`, `lib/validators.js`.
+    2. Plan changes:
+        - Add a new route `router.put('/profile', ...)` in `routes/users.js`.
+        - Inside the route:
+            - Get `userId` from `req.user.id`.
+            - Get `name`, `email` from `req.body`.
+            - Validate `name` and `email` using `validators.js`.
+            - Call model method `User.updateProfile(userId, { name, email })`.
+            - Handle validation and DB errors.
+            - Return updated profile or error.
+        - Check/add `updateProfile` method in `models/user.js`.
+    3. Start by reading `routes/users.js`.
+    </thinking>
+    ```
 
-    3.  **Reading File (Example Step):** Agent uses `<read_file><path>src/routes/users.js</path></read_file>`.
-        *(Agent receives file content or error, analyzes it in the next `<thinking>` block, then decides to read the next file or start applying changes)*
+3.  **Reading File (Example Step):** Agent uses `<read_file><path>src/routes/users.js</path></read_file>`.
+    *(Agent receives file content or error, analyzes it in the next `<thinking>` block, then decides to read the next file or start applying changes)*
 
-    4.  **Applying Changes (Example Step):** After analyzing files, the agent uses `<apply_diff>` or `<insert_content>` to add the new route and logic in `src/routes/users.js` and `src/models/user.js`.
+4.  **Applying Changes (Example Step):** After analyzing files, the agent uses `<apply_diff>` or `<insert_content>` to add the new route and logic in `src/routes/users.js` and `src/models/user.js`.
 
-    5.  **Completion:** After applying all changes and (optionally) verifying via `<execute_command>`, the agent uses `<attempt_completion>`.
+5.  **Completion:** After applying all changes and (optionally) verifying via `<execute_command>`, the agent uses `<attempt_completion>`.
 
 ```
 🪲 Fix 'Unknown option `--force`' error
@@ -425,54 +426,55 @@ The original descriptions of all tools, base modes, MCP servers, etc., are store
 The system prompt consists of several main parts, structured according to the role and responsibility of the specific mode-agent. Let's examine the structure of prompts using the Orchestrator and New Task modes as examples:
 
 #### Orchestrator
+
 ##### Example Workflow (Test)
 
-    1.  **Receiving Task (from Orchestrator):**
-        ```
-        🔍 Test user profile update endpoint
+1.  **Receiving Task (from Orchestrator):**
+    ```
+    🔍 Test user profile update endpoint
 
-        The `code` mode has implemented the PUT /api/users/profile endpoint in `routes/users.js`. Please write and execute integration tests for this endpoint.
+    The `code` mode has implemented the PUT /api/users/profile endpoint in `routes/users.js`. Please write and execute integration tests for this endpoint.
 
-        Context: Project uses Jest for testing. Test files are located in `test/`. The endpoint expects { name, email } and updates the authenticated user. Assume a test user exists and authentication middleware can be mocked or bypassed for testing routes.
+    Context: Project uses Jest for testing. Test files are located in `test/`. The endpoint expects { name, email } and updates the authenticated user. Assume a test user exists and authentication middleware can be mocked or bypassed for testing routes.
 
-        🆕 Add user profile editing feature
-        └── 🪃 Orchestrate profile editing implementation
-            ├── 💻 Implement user profile update endpoint
-            └── 🔍 Test user profile update endpoint
-                ^ we are here
+    🆕 Add user profile editing feature
+    └── 🪃 Orchestrate profile editing implementation
+        ├── 💻 Implement user profile update endpoint
+        └── 🔍 Test user profile update endpoint
+            ^ we are here
 
-        Create a new test file `test/users.profile.test.js`. Include tests for:
-        - Successful profile update (200 OK).
-        - Update with invalid email format (400 Bad Request).
-        - Update without authentication (401 Unauthorized - if applicable).
-        Execute the tests using `npm test`. If tests fail due to application code bugs, delegate to `debug`.
-        ```
+    Create a new test file `test/users.profile.test.js`. Include tests for:
+    - Successful profile update (200 OK).
+    - Update with invalid email format (400 Bad Request).
+    - Update without authentication (401 Unauthorized - if applicable).
+    Execute the tests using `npm test`. If tests fail due to application code bugs, delegate to `debug`.
+    ```
 
-    2.  **Analysis and Planning (`<thinking>`):**
-        ```xml
-        <thinking>
-        Task: Write and run integration tests for PUT /api/users/profile.
-        1. Plan:
-           - Create a new file `test/users.profile.test.js`.
-           - Write tests using Jest and `supertest` (assuming it's in the project):
-             - Test for successful update (POST with valid data, check status 200 and response).
-             - Test for invalid email (POST with invalid email, check status 400).
-             - Test for missing authentication (POST without token/session, check status 401).
-           - Use `write_to_file` to create the file with tests.
-           - Run tests via `execute_command npm test`.
-           - Analyze the result. If errors in application code - delegate to `debug`.
-        2. Start by creating the file `test/users.profile.test.js` with the basic test structure.
-        </thinking>
-        ```
+2.  **Analysis and Planning (`<thinking>`):**
+    ```xml
+    <thinking>
+    Task: Write and run integration tests for PUT /api/users/profile.
+    1. Plan:
+        - Create a new file `test/users.profile.test.js`.
+        - Write tests using Jest and `supertest` (assuming it's in the project):
+            - Test for successful update (POST with valid data, check status 200 and response).
+            - Test for invalid email (POST with invalid email, check status 400).
+            - Test for missing authentication (POST without token/session, check status 401).
+        - Use `write_to_file` to create the file with tests.
+        - Run tests via `execute_command npm test`.
+        - Analyze the result. If errors in application code - delegate to `debug`.
+    2. Start by creating the file `test/users.profile.test.js` with the basic test structure.
+    </thinking>
+    ```
 
-    3.  **Creating Test File (Example Step):** Agent uses `<write_to_file>` to create `test/users.profile.test.js` with the test content.
+3.  **Creating Test File (Example Step):** Agent uses `<write_to_file>` to create `test/users.profile.test.js` with the test content.
 
-    4.  **Running Tests (Example Step):** Agent uses `<execute_command><command>npm test -- test/users.profile.test.js</command></execute_command>`.
-        *(Agent receives command output)*
+4.  **Running Tests (Example Step):** Agent uses `<execute_command><command>npm test -- test/users.profile.test.js</command></execute_command>`.
+    *(Agent receives command output)*
 
-    5.  **Analyzing Results and Completion (Example Step):**
-        *   **If tests pass:** Agent uses `<attempt_completion>` with the message "Integration tests for PUT /api/users/profile successfully created and passed."
-        *   **If tests fail (error in application code):** Agent forms a message for the `debug` mode (including error output, invocation tree) and uses `<new_task><mode>debug</mode>...</new_task>`. After successful delegation, the agent uses `<attempt_completion>` with the message "Tests for PUT /api/users/profile created, but failed due to an error in the application code. The task to fix it has been delegated to the Debug mode."
+5.  **Analyzing Results and Completion (Example Step):**
+    *   **If tests pass:** Agent uses `<attempt_completion>` with the message "Integration tests for PUT /api/users/profile successfully created and passed."
+    *   **If tests fail (error in application code):** Agent forms a message for the `debug` mode (including error output, invocation tree) and uses `<new_task><mode>debug</mode>...</new_task>`. After successful delegation, the agent uses `<attempt_completion>` with the message "Tests for PUT /api/users/profile created, but failed due to an error in the application code. The task to fix it has been delegated to the Debug mode."
 
 The Orchestrator prompt begins with a clear description of its role and responsibilities:
 
@@ -1092,6 +1094,7 @@ The Orchestrator can adapt its decomposition and delegation plan based on the re
   - All 3 retry attempts are exhausted
   - Information necessary to proceed cannot be gathered with available tools
   - Initial analysis showed the task itself is unfeasible
+
 #### Visualization of Error Handling Decision Tree (Example: Orchestrator)
 
 ```mermaid
