@@ -27,9 +27,8 @@ IMPORTANT INSTRUCTIONS FOR CODE WRITING
 
 ## How to deal with imports
 
-1. Don't use relative paths in imports; instead, use absolute paths via # subpath alias.
-2. Always use node: protocol prefixes for built-in Node.js modules.
-3. Avoid using dynamic imports; prefer static imports for better performance and readability.
+1. Always use node: protocol prefixes for built-in Node.js modules.
+2. Avoid using dynamic imports; prefer static imports for better performance and readability.
 
 ## How to Write JavaScript Code
 
