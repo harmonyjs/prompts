@@ -6,7 +6,7 @@ This document details the structure, formation, and best practices for creating 
 
 - **Definition**: A System Prompt is the core instruction set provided to the underlying Language Model (LLM) to configure it as a specific Roo mode-agent. It dictates the agent's role, available tools, interaction rules, delegation capabilities, and overall objective within the software development workflow.
 - **Location**: Each mode-agent's system prompt is stored in a dedicated file within the `.roo/` directory, following the pattern `.roo/system-prompt-<mode-id>` (e.g., `.roo/system-prompt-orchestrator`).
-- **Relationship to Base Prompts**: System prompts are composed by combining and specializing foundational instructions stored in the `.roo/base-prompts/` directory (e.g., tool definitions, general rules, objective templates). This modular approach promotes consistency and maintainability.
+- **Relationship to Base Prompts**: The final system prompts (like `.roo/system-prompt-orchestrator`) are *manually constructed and maintained* by drawing upon and adapting the content found in the foundational instruction files within the `.roo/base-prompts/` directory (e.g., `tools.md`, `rules.md`). These base prompts serve as **source material or templates** during the prompt engineering process to ensure consistency. **There is no automatic inclusion or template engine mechanism (like `{{include}}`) involved; the content from base prompts is copied and potentially modified within each final system prompt file.** This modular *sourcing* approach promotes consistency and maintainability.
 
 ## 2. System Prompt Structure
 
@@ -20,6 +20,12 @@ System prompts are carefully structured to provide clear and unambiguous guidanc
 4.  **Process Orientation**: Each prompt describes the mode's typical workflow or decision-making process, though the level of detail varies.
 5.  **Tool Availability**: Clearly defines which tools (including MCP tools) are available to the mode and the precise format for invoking them.
 6.  **Hierarchical Binding**: Specifies which other modes the current mode can delegate tasks to using the `new_task` tool.
+
+### Requirements for System Prompt Files
+
+- **Identifier Integrity:** When editing system prompt files in `.roo/`, the initial heading line containing the mode's emoji and name (e.g., `# 🏛️ Architect Mode`, `# 💻 Code Mode`) serves as a critical system identifier and **MUST NOT** be altered. Changing these identifiers will break the system's mode recognition.
+
+- **Tool Consistency:** The set of tools defined as available within each system prompt file (e.g., in the `TOOL USE` or `🛠️ YOUR AVAILABLE TOOLS` section of `.roo/system-prompt-<mode>`) **MUST** exactly match the tools specified as available for that mode in its corresponding `<MODE>-MODE.md` specification document. Any discrepancy will lead to incorrect agent behavior.
 
 ### Example Structures
 
@@ -94,7 +100,7 @@ Placeholder for basic system information, highlighting the need to gather more v
 
 Creating an effective system prompt involves several steps, leveraging the base prompts and adding mode-specific logic:
 
-1.  **Composition from Base Prompts**: Start by combining relevant foundational components from `.roo/base-prompts/` (e.g., `tools.md`, `objective.md`, `general-rules.md`, `mcp-servers.md`). These provide the common language and definitions.
+1.  **Sourcing from Base Prompts**: When creating or updating a specific system prompt (e.g., for Orchestrator), start by **copying and pasting** relevant sections from the foundational component files in `.roo/base-prompts/` (e.g., the tool definitions from `tools.md`, general rules from `rules.md`). These base files provide the common language and definitions to ensure consistency across different modes. **This is a manual copy-and-adapt process, not an automated include.**
 2.  **Role Specialization**: Add specific instructions, responsibilities, and workflow descriptions tailored to the mode's unique role (e.g., the detailed step-by-step process for New Task, the decomposition/delegation logic for Orchestrator).
 3.  **Defining Tool Availability**: Explicitly list the tools (standard and MCP) available to *this specific mode*. Remove definitions for tools the mode should not access.
 4.  **Setting Delegation Rules**: Clearly define which other modes can be invoked using the `new_task` tool within the `MODES` or `RULES` section.
@@ -146,6 +152,8 @@ graph TD
     style M fill:#ccf,stroke:#333,stroke-width:2px
 ```
 
+**Note on Diagram:** The diagram above illustrates the *conceptual relationship* between the base prompt files and a final system prompt. It shows that the content for the final prompt is *sourced* and *adapted* from various base components and specialized definitions. It does not represent an automated build process or dynamic inclusion using directives like `{{include}}`.
+
 ## 4. Best Practices for Creating System Prompts
 
 The effectiveness of Roo hinges on high-quality system prompts. Follow these best practices:
@@ -176,11 +184,15 @@ Pay close attention to:
 
 ### Checklist for Verifying System Prompts
 
+- [ ] **Self-Containment:** The prompt is fully self-contained. There are **no references to external files, specs, or documentation**. All operational knowledge is present in the prompt.
+- [ ] **Concrete Examples:** Every tool and MCP server definition includes at least one correct usage example (and, if possible, a common incorrect example).
+- [ ] **Schema Inclusion:** All MCP server/tool input schemas and usage patterns are included in the prompt, not just referenced or summarized.
 - [ ] **Clarity & Unambiguity**: Is the language precise? Could any instruction be misinterpreted?
 - [ ] **Completeness**: Are all tools, rules, processes, context sharing, and edge cases covered?
 - [ ] **Consistency**: Is the prompt internally consistent? Does it align with the overall system architecture (`README.md`)?
 - [ ] **Accuracy**: Does it correctly represent the mode's intended capabilities and limitations?
 - [ ] **Structure & Readability**: Is it well-organized with clear headings, lists, and formatting?
+- [ ] **Tool Consistency**: Does the set of tools defined in the `TOOL USE` section exactly match the tools specified as available for this mode in its corresponding `<MODE>-MODE.md` specification document?
 - [ ] **Tool Definitions**: Are all *available* tools listed and accurately described? Are *unavailable* tools omitted?
 - [ ] **Delegation Rules**: Are the allowed modes for `new_task` clearly specified?
 - [ ] **`new_task` Message Format**: Is the required structure (including URID, context files, `@` path) clearly defined and exemplified?
@@ -189,6 +201,37 @@ Pay close attention to:
 - [ ] **Error Handling**: Is the strategy clear, robust, and consistent (including context file errors)?
 - [ ] **Formatting Rules**: Are the strict output formatting requirements explicit?
 - [ ] **LLM Address**: Is it written as direct instructions ("You must...", "Your task is...")?
+
+#### Self-Containment and Example Inclusion
+
+- **Never reference external files or documentation** (e.g., “see ARCHITECT-MODE.md” or “as per tools.md”).
+- **Copy and adapt** all tool and server definitions, schemas, and examples directly into the system prompt.
+- **Every tool and MCP server section must include:**
+  - A clear description
+  - Parameter list
+  - At least one correct usage example (and, if possible, a common incorrect example)
+  - For MCP tools, input schemas and step-by-step usage patterns
+
+### Common Pitfalls
+
+- **Referencing external specs or files:**  
+  - INCORRECT: “(exactly as per ARCHITECT-MODE.md)”
+  - CORRECT: Full tool definition and example included in the prompt
+
+- **Omitting usage examples:**  
+  - INCORRECT: Tool is described but no example is given
+  - CORRECT: Each tool has at least one correct usage example
+
+- **Providing incomplete MCP schemas:**  
+  - INCORRECT: “See mcp-servers.md for schema”
+  - CORRECT: Input schema and usage pattern are included in the prompt
+
+---
+
+> **Meta-Instruction:**  
+> Assume the LLM has no access to any context except the system prompt text.  
+> All operational knowledge must be present in the prompt.  
+> Never reference external files, specs, or documentation in the prompt body.
 
 ### Typical Problems and Solutions
 
@@ -260,3 +303,7 @@ Prompts should guide the LLM on *when* to apply each strategy:
 -   **Fail**: Error is fundamental (file definitely missing), retries exhausted, necessary info unobtainable, initial analysis shows task is impossible.
 
 By embedding these mechanisms directly into the system prompts, Roo ensures consistent and robust handling of common issues across its different modes.
+
+## General Structure and Composition
+
+**Identifier Integrity:** The first line of each system prompt file (e.g., `# 🏛️ Architect Mode`) contains the mode's unique emoji and name. This line acts as a critical system identifier and **MUST NOT** be modified during edits. Altering these identifiers will disrupt the system's ability to correctly load and use the prompts.

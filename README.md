@@ -323,3 +323,16 @@ Although all mode-agents have access to a certain set of tools, the nature and p
 
 - Some modes have limited use of the `new_task` tool. For example, Code can delegate tasks only to the Debug mode, while Orchestrator can delegate tasks to all modes.
 
+### 🛡️ Principle of Self-Containment and Explicitness in System Prompts
+
+All system prompts in Roo **must be fully self-contained**.
+
+- **Never reference external files, specifications, or documentation** (e.g., “as per ARCHITECT-MODE.md” or “see tools.md”).
+- The LLM only sees the prompt text.
+- **All tool definitions, usage rules, schemas, and concrete examples must be present in the prompt itself.**
+- Do not assume the LLM has access to any context except the system prompt text.
+
+**Every tool and MCP server definition in a system prompt must:**
+- Include a clear description, parameter list, and at least one correct usage example (and, if possible, a common incorrect example).
+- For MCP tools, include input schemas and step-by-step usage patterns directly in the prompt.
+
