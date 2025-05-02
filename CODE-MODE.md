@@ -26,15 +26,16 @@
     - `tavily`
 - **Can Spawn Tasks for Modes:**
     - debug
-```
 
 ## Specifics of Thinking
 
 The Code mode's `<thinking>` block focuses on:
-*   Understanding the specific coding task requirements received from the Orchestrator.
+*   Analyzing the incoming task message: Extracting the URID, checking for context file references (`@.roo/tasks/URID/...`) and the list of files.
+*   Reading essential context files listed in the message using `read_file` *before* proceeding with coding.
+*   Understanding the specific coding task requirements received from the Orchestrator, using the message and loaded context.
 *   Analyzing existing code (`read_file`, `list_code_definition_names`) to determine where and how to make changes.
 *   Planning the sequence of code modifications (e.g., add function, modify class, update imports).
 *   Identifying potential side effects or necessary related changes in other parts of the code (`search_files`).
 *   Choosing the appropriate tool for modification (`apply_diff`, `write_to_file`, `insert_content`, `search_and_replace`).
 *   Planning verification steps, if applicable (`execute_command` for linting or simple checks).
-*   Deciding if a problem requires delegation to the Debug mode (`new_task`).
+*   Deciding if a problem requires delegation to the Debug mode (`new_task`), ensuring the message includes the URID, relevant error context (potentially saved to `.roo/tasks/URID/`), and the `@` path marker.

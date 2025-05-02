@@ -23,10 +23,12 @@
 ## Specifics of Thinking
 
 The Architect mode's `<thinking>` block focuses on:
-*   Analyzing the requirements for system design or changes.
+*   Analyzing the incoming task message: Extracting the URID, checking for context file references (`@.roo/tasks/URID/...`) and the list of files.
+*   Reading essential context files listed in the message using `read_file` *before* proceeding with architectural analysis.
+*   Analyzing the requirements for system design or changes based on the message and loaded context.
 *   Exploring different architectural patterns and solutions.
 *   Evaluating trade-offs (scalability, maintainability, performance, complexity) between different approaches.
 *   Planning the structure of components and their interactions.
-*   Identifying necessary technologies or libraries.
-*   Considering potential impacts on the existing codebase (using tools like `read_file`, `list_files`, `repomix`).
-*   Planning the format of the architectural output (e.g., descriptions, diagrams like Mermaid).
+*   Identifying necessary technologies or libraries (potentially using `context7` or `tavily`).
+*   Considering potential impacts on the existing codebase (using tools like `read_file`, `list_files`, `repomix`, potentially referencing context from the task directory).
+*   Planning the format of the architectural output (e.g., descriptions, diagrams like Mermaid). If the output is large, consider saving it to a file in `.roo/tasks/URID/` and referencing it in the `attempt_completion` result.

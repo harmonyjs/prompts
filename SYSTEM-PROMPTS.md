@@ -167,23 +167,26 @@ Ensure prompts contain:
 
 Pay close attention to:
 
-1.  **`new_task` Message Structure**: Mandate the exact format (emoji, short desc, details, context, invocation tree, next step marker). Include a clear example.
+1.  **`new_task` Message Structure**: Mandate the exact format (emoji, short desc, URID, details, context, invocation tree, context file list, next step marker with `@` path). Include a clear, complete example incorporating the URID and context file references.
 2.  **`invocation tree` Concept**: Detail its purpose, formation rules, and the `^ we are here` marker. Provide an example.
-3.  **Self-Analysis/Result Evaluation**: Define criteria for checking task completion *before* calling `attempt_completion`. Include checklists if helpful.
-4.  **Error Handling & Fault Tolerance**: Specify retry limits (max 3 total attempts), progressive strategies (correct, retry, adapt, fail), and criteria for failure (`complete_with_failure`) or asking the user (`ask_followup_question`).
-5.  **Output Formatting**: Strictly enforce the response structure (e.g., `<thinking>` block followed *immediately* by one tool call). Explicitly forbid extra text or markdown. Provide clear examples of correct/incorrect output.
+3.  **Context Sharing Mechanism**: Clearly explain the `.roo/tasks/URID/` directory usage for large context. Detail the responsibilities of `new-task` (generation, creation) and other modes (saving, referencing, consuming).
+4.  **Self-Analysis/Result Evaluation**: Define criteria for checking task completion *before* calling `attempt_completion`. Include checklists if helpful.
+5.  **Error Handling & Fault Tolerance**: Specify retry limits (max 3 total attempts), progressive strategies (correct, retry, adapt, fail), and criteria for failure (`complete_with_failure`) or asking the user (`ask_followup_question`). Include handling for context file errors (e.g., file not found).
+6.  **Output Formatting**: Strictly enforce the response structure (e.g., `<thinking>` block followed *immediately* by one tool call). Explicitly forbid extra text or markdown. Provide clear examples of correct/incorrect output.
 
 ### Checklist for Verifying System Prompts
 
 - [ ] **Clarity & Unambiguity**: Is the language precise? Could any instruction be misinterpreted?
-- [ ] **Completeness**: Are all tools, rules, processes, and edge cases covered?
+- [ ] **Completeness**: Are all tools, rules, processes, context sharing, and edge cases covered?
 - [ ] **Consistency**: Is the prompt internally consistent? Does it align with the overall system architecture (`README.md`)?
 - [ ] **Accuracy**: Does it correctly represent the mode's intended capabilities and limitations?
 - [ ] **Structure & Readability**: Is it well-organized with clear headings, lists, and formatting?
 - [ ] **Tool Definitions**: Are all *available* tools listed and accurately described? Are *unavailable* tools omitted?
 - [ ] **Delegation Rules**: Are the allowed modes for `new_task` clearly specified?
+- [ ] **`new_task` Message Format**: Is the required structure (including URID, context files, `@` path) clearly defined and exemplified?
+- [ ] **Context Consumption**: Does the prompt instruct the mode to check for and read context files referenced in the `new_task` message?
 - [ ] **Examples**: Are there clear examples for critical formats and concepts?
-- [ ] **Error Handling**: Is the strategy clear, robust, and consistent?
+- [ ] **Error Handling**: Is the strategy clear, robust, and consistent (including context file errors)?
 - [ ] **Formatting Rules**: Are the strict output formatting requirements explicit?
 - [ ] **LLM Address**: Is it written as direct instructions ("You must...", "Your task is...")?
 
@@ -201,6 +204,8 @@ Pay close attention to:
     *   **Solution**: Be extremely explicit about the required output format. Use negative constraints ("NEVER add text after the final tool call"). Provide clear examples of *correct* and *incorrect* output.
 6.  **Lack of Self-Analysis**: Agent completes tasks prematurely or incorrectly.
     *   **Solution**: Add explicit instructions and checklists for self-verification before `attempt_completion`.
+7.  **Missing Context Handling**: Agent ignores context files or fails if they are missing.
+    *   **Solution**: Add explicit instructions in system prompts for *all* receiving modes to check the `new_task` message for URID, context file lists, and the `@` path. Instruct them to use `read_file` for listed files *before* starting work. Add error handling for `read_file` failures related to context files.
 
 ## 5. Error Handling Mechanisms and Fault Tolerance in Prompts
 
@@ -212,7 +217,7 @@ Prompts should instruct the agent on how to recognize and potentially handle:
 
 -   **Tool Call Errors**: Invalid parameters (paths, JSON), access issues, network errors (MCP), system errors reported by Roo.
 -   **Unsatisfactory Subtask Results**: When a delegated task completes (`attempt_completion` received), but the `<result>` content doesn't meet the requirements set by the delegating mode (primarily handled by Orchestrator).
--   **Information Gathering Failures**: `read_file` on non-existent file, `search_files` yields no results, MCP tool errors.
+-   **Information Gathering Failures**: `read_file` on non-existent file (including context files from `.roo/tasks/URID/`), `search_files` yields no results, MCP tool errors.
 -   **Fundamental Task Unfeasibility**: Identified during initial analysis (e.g., user request is contradictory or impossible).
 
 ### Fault Tolerance Strategies (Defined in Prompts)

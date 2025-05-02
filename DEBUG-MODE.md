@@ -28,7 +28,9 @@
 ## Specifics of Thinking
 
 The Debug mode's `<thinking>` block focuses on:
-*   Analyzing the error message, stack trace, and context provided in the task.
+*   Analyzing the incoming task message: Extracting the URID, checking for context file references (`@.roo/tasks/URID/...`) and the list of files (which might contain error logs, stack traces, or relevant code snippets).
+*   Reading essential context files listed in the message using `read_file` *before* proceeding with debugging.
+*   Analyzing the error message, stack trace, and context provided in the task message and loaded context files.
 *   Forming hypotheses about the root cause of the error.
 *   Planning steps to verify hypotheses (e.g., reading specific code sections (`read_file`), checking related files, searching for similar issues (`tavily`)).
 *   Pinpointing the exact location and cause of the bug.

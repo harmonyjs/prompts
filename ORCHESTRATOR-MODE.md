@@ -65,11 +65,14 @@ This strategy details a **decision tree** for using MCP servers:
 ## Specifics of Thinking
 
 The Orchestrator's `<thinking>` block concentrates on:
+*   Analyzing the incoming task message: Extracting the URID, checking for context file references (`@.roo/tasks/URID/...`) and the list of files.
+*   Reading essential context files listed in the message using `read_file` *before* proceeding with planning.
 *   Task decomposition into subtasks.
 *   Choosing a delegation strategy (which mode for which subtask).
-*   Determining the need for context gathering (using MCP servers like `context7`, `repomix`, `tavily`, or reading files).
+*   Determining the need for *additional* context gathering (using MCP servers like `context7`, `repomix`, `tavily`, or reading more files). If large context is gathered, plan to save it to the `.roo/tasks/URID/` directory using `write_to_file`.
 *   Selecting the appropriate mode for each subtask.
-*   Analyzing the results of completed subtasks to decide the next step (proceed, re-delegate, adapt plan, ask user).
+*   Formulating the `message` for `new_task`, ensuring it includes the URID, relevant context (potentially referencing newly saved files in the task directory), the invocation tree, and the `@.roo/tasks/URID/` path marker.
+*   Analyzing the results (`<result>` tag content) of completed subtasks to decide the next step (proceed, re-delegate, adapt plan, ask user).
 *   Synthesizing results from different branches.
 *   Evaluating overall task completion against the original request.
 
