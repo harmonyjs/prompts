@@ -84,7 +84,6 @@ There are 6 modes in total:
         - architect
         - code
         - debug
-        - test
 
 - **🏗️ Architect**: See [ARCHITECT-MODE.md](ARCHITECT-MODE.md) for a detailed description.
     - **ID**: `architect`
@@ -99,11 +98,6 @@ There are 6 modes in total:
     - **ID**: `debug`
     - **Can Spawn Tasks for Modes:** none.
 
-- **🔍 Test**: See [TEST-MODE.md](TEST-MODE.md) for a detailed description.
-    - **ID**: `test`
-    - **Can Spawn Tasks for Modes:**
-        - debug 
-
 
 Thus, the mode hierarchy looks as follows:
 
@@ -113,17 +107,15 @@ Thus, the mode hierarchy looks as follows:
       ├── 🏗️ Architect
       ├── 💻 Code
       │   └── 🪲 Debug
-      ├── 🔍 Test
-      │   └── 🪲 Debug
       └── 🪲 Debug
 ```
 
-🆕 Task can spawn a branch with the 🪃 Orchestrator mode. 🪃 Orchestrator can spawn branches with 🏗️ Architect, 💻 Code, 🔍 Test, and 🪲 Debug modes. 🏗️ Architect cannot spawn other branches. 💻 Code can only spawn 🪲 Debug branches. 🔍 Test can also only spawn 🪲 Debug branches. 🪲 Debug cannot spawn other branches.
+🆕 Task can spawn a branch with the 🪃 Orchestrator mode. 🪃 Orchestrator can spawn branches with 🏗️ Architect, 💻 Code, and 🪲 Debug modes. 🏗️ Architect cannot spawn other branches. 💻 Code can only spawn 🪲 Debug branches. 🪲 Debug cannot spawn other branches.
 
 
 ## Branching with a Different Mode
 
-When a mode-agent decides that it is necessary to branch off with another mode, it uses the `new_task` tool, which allows it to create a new task and pass it to another mode-agent. Each mode-agent has its own allowed modes with which it can interact. For example, the `💻 Code` mode-agent can only branch off to the `🪲 Debug` mode-agent, while the `🪃 Orchestrator` mode-agent can branch off to the `🏗️ Architect`, `💻 Code`, `🔍 Test`, and `🪲 Debug` mode-agents.
+When a mode-agent decides that it is necessary to branch off with another mode, it uses the `new_task` tool, which allows it to create a new task and pass it to another mode-agent. Each mode-agent has its own allowed modes with which it can interact. For example, the `💻 Code` mode-agent can only branch off to the `🪲 Debug` mode-agent, while the `🪃 Orchestrator` mode-agent can branch off to the `🏗️ Architect`, `💻 Code`, and `🪲 Debug` mode-agents.
 
 ### How Branching Occurs
 
@@ -208,7 +200,7 @@ Example of what an `invocation tree` might look like:
 
 ##### Example Workflow (Debug)
 
-1.  **Receiving Task (from Code or Test):**
+1.  **Receiving Task (from Code mode):**
     ```
     🪲 Fix TypeError in calculateTotal
 
@@ -265,13 +257,13 @@ Example of what an `invocation tree` might look like:
 │   ├── 💻 Implement JWT token generation
 │   │   └── 🪲 Fix token expiration logic error
 │   ├── 💻 Implement password hashing update
-│   └── 🔍 Test entire authentication flow
+│   └── 💻 Complete entire authentication flow
 │   │   ├── 🪲 Debug crash on startup
 │   │   ├── 🪲 Debug failing login test case
 │   │   ^ we are here
 ```
 
-This tree shows that the initial refactoring task (🆕 Refactor...) was passed to the orchestrator (🪃 Orchestrate...). The orchestrator spawned tasks for the architect (🏗️ Design...), two tasks for the coder (💻 Implement...), and one for the tester (🔍 Test...). One of the coding tasks required debugging (🪲 Fix...), and the testing task also revealed two problems requiring debugging (🪲 Debug...), and we are currently in this last debug branch for the second problem.
+This tree shows that the initial refactoring task (🆕 Refactor...) was passed to the orchestrator (🪃 Orchestrate...). The orchestrator spawned tasks for the architect (🏗️ Design...), three tasks for the coder (💻 Implement...Complete...). One of the coding tasks required debugging (🪲 Fix...), and the last coding task also revealed two problems requiring debugging (🪲 Debug...), and we are currently in this last debug branch for the second problem.
 
 ## Context Sharing via Task Directories
 

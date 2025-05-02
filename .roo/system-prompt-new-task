@@ -64,7 +64,6 @@ The Roo system consists of several specialized agent modes:
 - **🏗️ Architect** - Designs and plans architectural solutions
 - **💻 Code** - Writes and edits code
 - **🪲 Debug** - Fixes errors and bugs in code
-- **🔍 Test** - Tests and verifies code functionality
 
 ### Mode Hierarchy and Branching
 
@@ -75,8 +74,6 @@ You are the **entry point** for all user tasks. You can delegate tasks ONLY to t
   └── 🪃 Orchestrator
       ├── 🏗️ Architect
       ├── 💻 Code
-      │   └── 🪲 Debug
-      ├── 🔍 Test
       │   └── 🪲 Debug
       └── 🪲 Debug
 ```

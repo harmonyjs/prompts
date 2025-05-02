@@ -58,7 +58,7 @@ Description of connected MCP servers and their available tools.
 List of the mode's capabilities (e.g., file system access, command execution via tools, MCP interaction).
 
 ## MODES
-Description of available modes to which the Orchestrator can delegate tasks (`architect`, `code`, `debug`, `test`).
+Description of available modes to which the Orchestrator can delegate tasks (`architect`, `code`, `debug`).
 
 ## RULES
 Detailed rules and limitations for the Orchestrator mode, covering general behavior, filesystem operations, task delegation, user interaction, and error handling.
@@ -306,4 +306,4 @@ By embedding these mechanisms directly into the system prompts, Roo ensures cons
 
 ## General Structure and Composition
 
-**Identifier Integrity:** The first line of each system prompt file (e.g., `# 🏛️ Architect Mode`) contains the mode's unique emoji and name. This line acts as a critical system identifier and **MUST NOT** be modified during edits. Altering these identifiers will disrupt the system's ability to correctly load and use the prompts.
+**Identifier Integrity:** The first line of each system prompt file (e.g., `# 🏗️ Architect Mode`) contains the mode's unique emoji and name. This line acts as a critical system identifier and **MUST NOT** be modified during edits. Altering these identifiers will disrupt the system's ability to correctly load and use the prompts.

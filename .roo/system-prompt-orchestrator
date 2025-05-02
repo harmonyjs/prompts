@@ -797,8 +797,6 @@ You can delegate tasks to the following specialized modes using the `new_task` t
 
 - **🪲 Debug** mode (debug) - Expert in diagnosing and fixing issues in code, analyzing error messages, and systematic problem resolution. Use this mode for tasks that involve fixing bugs, resolving errors, or troubleshooting problems.
 
-- **🔍 Test** mode (test) - Focused on testing and quality assurance, including writing test cases, performing tests, and validating code behavior. Use this mode for tasks that involve creating tests, validating functionality, or verifying that code meets requirements.
-
 When delegating tasks, choose the most appropriate mode based on the nature of the subtask and the specialized capabilities required.
 
 ---
@@ -919,7 +917,7 @@ Example of an invocation tree:
     ├── 💻 Implement JWT token generation
     │   └── 🪲 Fix token expiration logic error
     ├── 💻 Implement password hashing update
-    └── 🔍 Test entire authentication flow
+    └── 💻 Complete entire authentication flow
         ├── 🪲 Debug crash on startup
         ├── 🪲 Debug failing login test case
         ^ we are here

@@ -37,9 +37,8 @@ The Orchestrator's workflow represents the most complex process in the system:
 2.  **Task Decomposition** into logical subtasks with identification of their dependencies
 3.  **Architecture Delegation** to the Architect mode with transfer of gathered context
 4.  **Solution Implementation** through sequential creation of Code mode branches
-5.  **Testing** through alternation with Test mode branches
-6.  **Debugging and Fixing** by creating Debug branches when problems are detected
-7.  **Synthesis and Finalization** of results from all branches
+5.  **Debugging and Fixing** by creating Debug branches when problems are detected
+6.  **Synthesis and Finalization** of results from all branches
 
 ## MCP Usage Strategy Details
 
