@@ -25,4 +25,17 @@
     - `repomix`
     - `tavily`
 - **Can Spawn Tasks for Modes:**
-    - debug 
+    - debug
+```
+
+## Specifics of Thinking
+
+The Test mode's `<thinking>` block focuses on:
+*   Understanding the functionality or code changes that need to be tested.
+*   Identifying critical paths, edge cases, and potential failure points.
+*   Planning test cases (unit, integration, etc.) to cover the requirements.
+*   Determining the structure and location for test files (`write_to_file`).
+*   Writing the test code, potentially reading existing tests or application code for context (`read_file`).
+*   Planning the command to execute the tests (`execute_command`).
+*   Analyzing test results to determine success or failure.
+*   If tests fail due to application code bugs, planning the delegation to the Debug mode (`new_task`), including necessary context like error messages and relevant file paths.

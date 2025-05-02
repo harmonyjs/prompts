@@ -24,3 +24,13 @@
     - `repomix`
     - `tavily`
 - **Can Spawn Tasks for Modes:** none.
+
+## Specifics of Thinking
+
+The Debug mode's `<thinking>` block focuses on:
+*   Analyzing the error message, stack trace, and context provided in the task.
+*   Forming hypotheses about the root cause of the error.
+*   Planning steps to verify hypotheses (e.g., reading specific code sections (`read_file`), checking related files, searching for similar issues (`tavily`)).
+*   Pinpointing the exact location and cause of the bug.
+*   Planning the code fix (`apply_diff`, `insert_content`, etc.).
+*   Planning verification steps to ensure the fix works and doesn't introduce regressions (`execute_command` to run tests or the failing command).

@@ -556,34 +556,7 @@ The workflow algorithms of mode-agents are not just linear sequences of actions 
 
 #### Orchestrator
 
-The Orchestrator's workflow represents the most complex process in the system:
-
-1. **Context and Knowledge Gathering**:
-   - Analysis of the initial user request
-   - Study of the codebase structure via `list_files` and `read_file`
-   - Collection of documentation for mentioned technologies via `context7`
-   - If necessary, codebase analysis via `repomix`
-   - Search for relevant information on the internet via `tavily`
-
-2. **Task Decomposition** into logical subtasks with identification of their dependencies
-
-3. **Architecture Delegation** to the Architect mode with transfer of gathered context
-
-4. **Solution Implementation** through sequential creation of Code mode branches
-
-5. **Testing** through alternation with Test mode branches
-
-6. **Debugging and Fixing** by creating Debug branches when problems are detected
-
-7. **Synthesis and Finalization** of results from all branches
-
 #### Task Mode
-
-The Task mode has a more rigid algorithm:
-
-1. **Mandatory First Step**: gathering system information via `execute_command`
-2. **User Request Analysis** and context enrichment
-3. **Delegation** of the enriched request to the Orchestrator mode
 
 ### Integrating Tools into Algorithms
 
@@ -601,26 +574,10 @@ This directly embeds the use of `execute_command` at the very beginning of the w
 
 ### MCP Usage Strategies in Algorithms
 
-Particularly interesting is how MCP server usage strategies are formalized within the algorithms. The Orchestrator's system prompt contains a special `MCP USAGE STRATEGY` section that details when and how to use various MCP servers:
-
 ```
 Overarching Principle: Proactive Context Gathering
 If fetching external context could reasonably improve the quality, accuracy, or safety of your plan or the instructions you delegate, you should prioritize doing so.
 ```
-
-This strategy details a **decision tree** for using MCP servers:
-
-1. **Check for Explicit Technology Mentions (`context7`)**:
-   - **Trigger**: Mention of specific libraries, frameworks, APIs, SDKs
-   - **Action**: Mandatory call to `context7` to get documentation
-
-2. **Assess Need for Codebase Overview (`repomix`)**:
-   - **Trigger**: Complex changes to internal logic, potential impact on multiple files
-   - **Action**: Recommended use of `repomix` to analyze codebase structure
-
-3. **Consider Need for External Web Context (`tavily`)**:
-   - **Trigger**: Need for information beyond official documentation and the local codebase
-   - **Action**: Use `tavily` for web searches
 
 ### Decision Trees in Algorithms
 
@@ -644,63 +601,7 @@ Analyze Task
     └── NO → Break down into subtasks and repeat analysis
 ```
 
-### Formalizing Algorithms in System Prompts
-
-The special value of system prompts lies in their formalization of these algorithms, turning them into concrete instructions for the LLM. For example, the beginning of the Orchestrator prompt defines the key steps:
-
-```
-As an orchestrator, you should:
-
-1. When given a complex task, break it down into logical subtasks...
-2. For each subtask, use the `new_task` tool to delegate...
-3. Track and manage progress...
-```
-
-### Interaction of Algorithms of Different Modes
-
-A key feature of Roo is that the algorithms of different modes interact, forming an integrated system:
-
-1. **Task** → request enrichment → **Orchestrator**
-2. **Orchestrator** → task decomposition → **Architect**/**Code**/**Test**/**Debug**
-3. **Architect** → design → **Orchestrator** → **Code**
-4. **Code** → implementation → **Debug** (if necessary)
-5. **Test** → verification → **Debug** (if problems arise)
-
-This interaction, formalized through delegation rules in system prompts, creates a cohesive system capable of solving complex programming tasks.
-
-## Structured Thinking and Decision Making
-
-A distinctive feature of Roo's system prompts is the use of `<thinking></thinking>` tags, which form the basis for structured thinking and decision-making by all mode-agents.
-
-### Goals of Using Structured Thinking
-
-- **Observability and Debugging**: `<thinking>` tags allow system developers to see not only the result but the entire decision-making process of the LLM. This is crucial for understanding why the model chose a particular tool or parameter, especially in cases of unexpected behavior.
-
-- **Enforcing Process Adherence**: Requiring the articulation of analysis and planning steps within `<thinking>` forces the LLM to follow the complex instructions and multi-step algorithms described in the prompt more strictly.
-
-- **Justifying Choices**: The model must explain why it chooses a specific tool or parameter, increasing the likelihood of a correct choice.
-
-- **Self-Correction**: By verbalizing its plan, the model can potentially notice logical inconsistencies or missed steps before generating the tool call.
-
-### Impact on the Decision-Making Process
-
-Structured thinking guides the LLM to perform tasks methodically, reduces the likelihood of "cutting corners" or ignoring parts of instructions, improves the quality of tool and parameter selection, and makes the process more predictable.
-
 ### Specifics of Thinking in Different Modes
-
-Although the `<thinking></thinking>` tag format is the same for all modes, the content of the thinking varies significantly:
-
-- **Task (PromptEnhancer)**: Focuses on analyzing the user's initial request, assessing its feasibility in principle, identifying missing information to improve the prompt, planning the collection of this information, and the logic of prompt transformation.
-
-- **Orchestrator**: Concentrates on task decomposition, choosing a delegation strategy, determining the need for context gathering (MCP, files), selecting the appropriate mode for a subtask, and analyzing the results of completed subtasks.
-
-- **Architect**: Thinks about the codebase structure, possible architectural solutions, evaluates trade-offs between different approaches, and plans the most elegant architectural solution.
-
-- **Code**: Analyzes the current code, identifies patterns, plans changes, and assesses their impact on other parts of the codebase.
-
-- **Debug**: Forms hypotheses about the causes of a problem, plans steps to test these hypotheses, and analyzes the test results.
-
-- **Test**: Identifies critical paths and edge cases, plans test cases, and analyzes code coverage.
 
 ### Example of Structured Thinking (Orchestrator)
 
@@ -994,38 +895,3 @@ The Orchestrator can adapt its decomposition and delegation plan based on the re
   - All 3 retry attempts are exhausted
   - Information necessary to proceed cannot be gathered with available tools
   - Initial analysis showed the task itself is unfeasible
-
-#### Visualization of Error Handling Decision Tree (Example: Orchestrator)
-
-```mermaid
-graph TD
-    A[Received subtask result/error] --> B{Analyze result};
-    B -- Successful & meets requirements? --> C[Proceed to next subtask];
-    B -- Unsuccessful / Doesn't meet --> D{Error correctable? / Attempts < 3?};
-    D -- Yes (e.g., parameter typo) --> E[Retry with corrections];
-    D -- No --> F{Re-delegation possible?};
-    F -- Yes (e.g., incomplete result) --> G[Modify instructions & re-delegate];
-    F -- No --> H{Plan adaptation possible?};
-    H -- Yes --> I[Adapt plan & continue];
-    H -- No --> J{Ask user?};
-    J -- Yes --> K[Use ask_followup_question];
-    J -- No --> L[Acknowledge Failure (Fail)];
-
-    E --> B;
-    G --> B;
-    I --> C;
-    K --> B;
-
-    style L fill:#fbb,stroke:#333,stroke-width:2px
-    style C fill:#bfb,stroke:#333,stroke-width:2px
-```
-
-### Specifics of Error Handling in Different Modes
-
-- **Task** focuses on checking the fundamental feasibility of the task and gathering the minimum necessary context before delegating to the Orchestrator.
-
-- **Orchestrator** has the most complex error handling mechanisms, including re-delegation, plan adaptation, and user clarification.
-
-- **Execution modes** (Code, Debug, Test, Architect) focus on handling errors within their specialization and may request clarifications or delegate debugging to other modes (e.g., Code → Debug).
-
-These fault tolerance mechanisms ensure the high reliability of the Roo system, allowing it to handle various unforeseen situations and adapt to changing conditions.

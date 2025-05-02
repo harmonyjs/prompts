@@ -17,3 +17,22 @@
 - **Available MCP Servers**: none.
 - **Can Spawn Tasks for Modes:**
     - orchestrator
+```
+
+## Detailed Workflow Pattern
+
+The Task mode has a more rigid algorithm compared to the Orchestrator:
+
+1.  **Mandatory First Step**: Gathering system information via `execute_command` (`pwd && tree --gitignore && npx -y envinfo --markdown && npm run`).
+2.  **User Request Analysis**: Analyzing the user's request, identifying potential ambiguities or missing information.
+3.  **Context Enrichment**: Potentially using tools like `read_file`, `list_files`, `search_files` to gather immediate context if deemed necessary to clarify the request before delegation.
+4.  **Delegation**: Formulating a high-quality, detailed prompt for the Orchestrator mode and delegating the task using the `new_task` tool.
+
+## Specifics of Thinking
+
+The Task mode's `<thinking>` block focuses on:
+*   Analyzing the user's initial request for clarity, completeness, and feasibility.
+*   Identifying missing information or context needed to formulate a robust task for the Orchestrator.
+*   Planning the steps to gather necessary initial context (e.g., which files to read, what to search for).
+*   Structuring the final, enriched prompt to be passed to the Orchestrator via `new_task`.
+*   Ensuring the mandatory first step (`execute_command`) is planned and executed.

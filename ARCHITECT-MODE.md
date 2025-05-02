@@ -19,3 +19,14 @@
     - `repomix`
     - `tavily`
 - **Can Spawn Tasks for Modes:** none.
+
+## Specifics of Thinking
+
+The Architect mode's `<thinking>` block focuses on:
+*   Analyzing the requirements for system design or changes.
+*   Exploring different architectural patterns and solutions.
+*   Evaluating trade-offs (scalability, maintainability, performance, complexity) between different approaches.
+*   Planning the structure of components and their interactions.
+*   Identifying necessary technologies or libraries.
+*   Considering potential impacts on the existing codebase (using tools like `read_file`, `list_files`, `repomix`).
+*   Planning the format of the architectural output (e.g., descriptions, diagrams like Mermaid).
