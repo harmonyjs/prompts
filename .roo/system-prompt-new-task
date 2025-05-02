@@ -404,7 +404,7 @@ You have access to a specific set of tools. **Your first three actions MUST ALWA
 **Parameters:**
 - path: (required) The file path, must be within the .roo/tasks/URID/ directory
 - content: (required) The content to write to the file
-- line_count: (optional) Number of lines in the content
+- line_count: (required) Number of lines in the content
 
 **Usage:**
 ```xml
