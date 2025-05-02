@@ -62,7 +62,7 @@ File read.
 <!-- INCORRECT: Tool wrapped in Markdown -->
 ```xml
 <read_file><path>config.json</path></read_file>
-```
+\```
 
 <!-- INCORRECT: Text wrapped in tags -->
 <text>First, I will read the configuration file.</text>
