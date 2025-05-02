@@ -1,5 +1,5 @@
-EDITED_MODE=orchestrator
-mode=orchestrator
+EDITED_MODE=debug
+mode=debug
 
 Твоя задача - обновить системный промпт, который находится в директории `.roo/` и имеет наименование вида `system-prompt-<mode>`, где `<mode>` - это название режима, например `new-task`, `orchestrator`, `debug`, `test`, `code`, `architect`. Системный промпт должны быть обновлен в соответствии с новыми требованиями и спецификациями из README.md и SYSTEM-PROMPTS.md.
 
