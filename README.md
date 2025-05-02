@@ -131,30 +131,6 @@ There are 6 modes in total:
         - `tavily`
     - **Can Spawn Tasks for Modes:** none.
 
-##### Example Thinking (Architect)
-
-    ```xml
-    <thinking>
-    Task: Design a scalable background task processing system for a web application.
-    1. Requirements Analysis: Need asynchronous processing, fault tolerance, monitoring. Tech stack: Python/Flask, PostgreSQL, Redis.
-    2. Architecture Options:
-        a) Celery + Redis/RabbitMQ: Mature solution, good community, but complex setup.
-        b) RQ (Redis Queue): Simpler than Celery, integrates well with Redis, but less feature-rich.
-        c) Custom solution based on PostgreSQL (LISTEN/NOTIFY): Minimal dependencies, but requires more code for task management.
-    3. Context Gathering:
-        - Check current load and expected growth (`read_file` logs, `ask_followup_question` user).
-        - Study Celery and RQ documentation (`context7`).
-        - Search for Celery vs RQ comparisons (`tavily`).
-    4. Decision: Considering the ease of integration with existing Redis and moderate task complexity, I recommend RQ.
-    5. Plan:
-        - Define RQ worker structure.
-        - Design task queuing mechanism from Flask.
-        - Describe task data format.
-        - Propose monitoring scheme (RQ-Dashboard).
-        - Prepare a Mermaid diagram.
-    6. Next Step: Request RQ documentation via `context7`.
-    </thinking>
-    ```
 - **💻 Code**:
     - **ID**: `code`
     - **Description**: The mode responsible for writing and editing code. It uses tools and APIs to perform code-related tasks.
@@ -299,6 +275,33 @@ For example:
     ```
 
 2.  **Analysis and Planning (`<thinking>`):**
+
+    Architect mode analyzes the task and creates a plan for implementation.
+
+    ```xml
+    <thinking>
+    Task: Design a scalable background task processing system for a web application.
+    1. Requirements Analysis: Need asynchronous processing, fault tolerance, monitoring. Tech stack: Python/Flask, PostgreSQL, Redis.
+    2. Architecture Options:
+        a) Celery + Redis/RabbitMQ: Mature solution, good community, but complex setup.
+        b) RQ (Redis Queue): Simpler than Celery, integrates well with Redis, but less feature-rich.
+        c) Custom solution based on PostgreSQL (LISTEN/NOTIFY): Minimal dependencies, but requires more code for task management.
+    3. Context Gathering:
+        - Check current load and expected growth (`read_file` logs, `ask_followup_question` user).
+        - Study Celery and RQ documentation (`context7`).
+        - Search for Celery vs RQ comparisons (`tavily`).
+    4. Decision: Considering the ease of integration with existing Redis and moderate task complexity, I recommend RQ.
+    5. Plan:
+        - Define RQ worker structure.
+        - Design task queuing mechanism from Flask.
+        - Describe task data format.
+        - Propose monitoring scheme (RQ-Dashboard).
+        - Prepare a Mermaid diagram.
+    6. Next Step: Request RQ documentation via `context7`.
+    </thinking>
+    ```
+
+    Code mode comes up with a detailed plan for implementing the user profile update endpoint, breaking it down into steps of writing code and identifying relevant files.
     ```xml
     <thinking>
     Task: Implement PUT /api/users/profile.
