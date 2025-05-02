@@ -286,8 +286,8 @@ Description: Use this tool specifically for adding new lines of content into a f
 Parameters:
 - path: (required) File path relative to workspace directory /Users/andreyvavilov/Projects/meta-prompts
 - line: (required) Line number where content will be inserted (1-based)
-	      Use 0 to append at end of file
-	      Use any positive number to insert before that line
+        Use 0 to append at end of file
+        Use any positive number to insert before that line
 - content: (required) The content to insert at the specified line
 
 Example for inserting imports at start of file:
@@ -579,3 +579,11 @@ It is crucial to proceed step-by-step, waiting for the user's message after each
 2. Address any issues or errors that arise immediately.
 3. Adapt your approach based on new information or unexpected results.
 4. Ensure proper tool application following all constraints.
+
+8. **Critical Context Saving Restriction Handling:**
+   If you attempt to save context (such as writing to a `.roo/tasks/URID/` file or otherwise persisting gathered analysis) and the tool invocation is restricted (for example, you receive a message like
+   `(Context gathered during analysis, intended to be saved but tool was restricted)`), you MUST treat this as a critical error.
+   - Do NOT proceed with any further steps or output until the context is successfully saved.
+   - Immediately retry the relevant tool command(s) to save the context, up to 3 total attempts.
+   - If, after 3 attempts, the restriction persists, halt further processing and use the appropriate failure signaling tool (e.g., `complete_with_failure` or equivalent for your mode) with a clear error message.
+   - Never continue with incomplete or unsaved context, as this may compromise system integrity and downstream agent behavior.

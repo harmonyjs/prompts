@@ -299,6 +299,10 @@ To handle context larger than what comfortably fits in the `new_task` message (e
     *   Reads the list of specified context files from the message.
     *   Uses `read_file` to load the content of these files from the `.roo/tasks/URID/` directory *before* starting the main task logic.
 
+
+**Note:**
+Saving context to the task directory is a critical operation. If a tool restriction prevents context saving, you must follow the error handling protocol: do not proceed until context is saved, retry up to 3 times, and halt with a clear error if saving remains impossible.
+
 This mechanism allows for the transfer of rich, extensive context between modes without overloading the `message` parameter, ensuring that subsequent modes have all the necessary information to perform their tasks effectively.
 
 ## Individual Tool Usage Scenarios

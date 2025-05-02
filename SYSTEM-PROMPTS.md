@@ -342,6 +342,14 @@ Prompts explicitly define these strategies:
 -   **Tools**: Specify which tool to use to signal failure (e.g., `complete_with_failure` for Task mode).
    **Alternative Actions**: Instruct all modes that if an ambiguity, contradiction, or missing information is encountered that cannot be resolved with available tools, the **only** allowed way to communicate with the user is via the `ask_followup_question` tool. No other user communication is permitted. Modes may also adapt the plan if appropriate.
 
+#### Critical Restrictions Handling
+   If LLM attempts to save context (such as writing to a `.roo/tasks/URID/` file or otherwise persisting gathered analysis) and the tool invocation is restricted (for example, a message like
+   `(Context gathered during analysis, intended to be saved but tool was restricted)`), LLM MUST treat this as a critical error.
+   - Do NOT proceed with any further steps or output until the context is successfully saved.
+   - Immediately retry the relevant tool command(s) to save the context, up to 3 total attempts.
+   - If, after 3 attempts, the restriction persists, LLM have to halt further processing and use the appropriate failure signaling tool with a clear error message.
+   - LLM never allowed to continue with incomplete or unsaved context, as this may compromise system integrity and downstream agent behavior.
+
 #### Re-delegation (Orchestrator Specific)
 
 -   **Instruction**: The Orchestrator's prompt details how to analyze the `<result>` of a completed subtask and, if unsatisfactory, modify the instructions (`message` in `new_task`) and re-delegate the task (potentially to the same or a different mode).

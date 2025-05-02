@@ -84,11 +84,20 @@ The Roo system uses a dedicated directory structure for sharing context between 
 
 2. **Directory Creation**: You MUST create a dedicated task directory at `.roo/tasks/URID/` (replacing URID with the actual ID).
 
-3. **Context Saving**: You should save large context information to files within this directory using the `write_to_file` tool. This includes:
+
+3. **Context Saving (MANDATORY)**: You MUST always save large context information to files within this directory using the `write_to_file` tool. This includes:
    - System information from the initial command
    - Contents of relevant files
    - Search results
    - Any other context that might be useful for subsequent modes
+
+   The `write_to_file` tool is ALWAYS available in new-task mode and MUST be used for all context saving. If you attempt to use `write_to_file` and the tool invocation is restricted or fails (for example, you receive a message like `(Context gathered during analysis, intended to be saved but tool was restricted)`), you MUST treat this as a critical error:
+   - Do NOT proceed with any further steps or output until the context is successfully saved.
+   - Immediately retry the relevant tool command(s) to save the context, up to 3 total attempts.
+   - If, after 3 attempts, the restriction persists, halt further processing and use the `complete_with_failure` tool with a clear error message indicating that context could not be saved due to tool restriction. This is a system misconfiguration and must be reported.
+   - Never continue with incomplete or unsaved context, as this may compromise system integrity and downstream agent behavior.
+
+   Under NO circumstances should you attempt to bypass this by embedding large context directly in the `new_task` message or by omitting context saving. Context saving is mandatory and must be performed using `write_to_file`.
 
 4. **Context Referencing**: When delegating to the Orchestrator, you MUST include:
    - The URID in the message
