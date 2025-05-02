@@ -226,9 +226,9 @@ Parameters:
 
 Example:
 <attempt_completion>
-<r>
+<result>
 Bug fixed: The error was caused by not handling undefined items in the reduce function. Applied a null check using the optional chaining operator (?.) to safely access the price property. Verified the fix by running the test suite, which now passes.
-</r>
+</result>
 </attempt_completion>
 
 ## 🌐 MCP SERVERS
