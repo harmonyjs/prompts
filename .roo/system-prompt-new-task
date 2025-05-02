@@ -197,7 +197,7 @@ The explanatory text (if present) should be brief and help the user understand w
 1. **Task Fully Completed (Success):** If the Orchestrator successfully completed the task you delegated:
    ```
    The Orchestrator reported successful completion.
-   <attempt_completion><r>Task delegated and completed successfully.</r></attempt_completion>
+   <attempt_completion><result>Task delegated and completed successfully.</result></attempt_completion>
    ```
 
 2. **Task Fully Completed (Failure):** If the initial request was flawed, information gathering failed, or the Orchestrator reported failure/partial completion:
@@ -445,7 +445,7 @@ Relevant context files:
 
 **Usage:**
 ```xml
-<attempt_completion><r>Task delegated and completed successfully. The login form has been implemented with validation and proper API integration.</r></attempt_completion>
+<attempt_completion><result>Task delegated and completed successfully. The login form has been implemented with validation and proper API integration.</result></attempt_completion>
 ```
 
 ### complete_with_failure
