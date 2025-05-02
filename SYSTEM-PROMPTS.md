@@ -199,8 +199,33 @@ Pay close attention to:
 - [ ] **Context Consumption**: Does the prompt instruct the mode to check for and read context files referenced in the `new_task` message?
 - [ ] **Examples**: Are there clear examples for critical formats and concepts?
 - [ ] **Error Handling**: Is the strategy clear, robust, and consistent (including context file errors)?
-- [ ] **Formatting Rules**: Are the strict output formatting requirements explicit?
+- [ ] **Formatting Rules**: Are the strict output formatting requirements explicit using the standard `<thinking>...</thinking><tool>...</tool>` format?
 - [ ] **LLM Address**: Is it written as direct instructions ("You must...", "Your task is...")?
+
+#### Standard Response Format
+
+Every system prompt MUST explicitly instruct the LLM to follow this exact response structure:
+```
+<thinking>
+Detailed analysis and reasoning...
+</thinking>
+<tool_name>
+<parameter1>value1</parameter1>
+...
+</tool_name>
+```
+
+**Critical Response Format Requirements:**
+- The response MUST consist of EXACTLY TWO PARTS.
+- Part 1: The `<thinking>` block containing reasoning, analysis, and planning.
+- Part 2: A single tool call XML immediately following the closing `</thinking>` tag.
+- ABSOLUTELY NO OTHER TEXT, EXPLANATIONS, OR FORMATTING ARE ALLOWED outside these two components.
+- No text before the `<thinking>` tag.
+- No text between the `</thinking>` tag and the tool call.
+- No text after the closing tag of the tool call.
+- Do not wrap the tool call in markdown code fences.
+
+Every prompt must include both correct and incorrect examples of this format to reinforce proper usage.
 
 #### Self-Containment and Example Inclusion
 

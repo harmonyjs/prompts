@@ -38,4 +38,23 @@ The Code mode's `<thinking>` block focuses on:
 *   Identifying potential side effects or necessary related changes in other parts of the code (`search_files`).
 *   Choosing the appropriate tool for modification (`apply_diff`, `write_to_file`, `insert_content`, `search_and_replace`).
 *   Planning verification steps, if applicable (`execute_command` for linting or simple checks).
-*   Deciding if a problem requires delegation to the Debug mode (`new_task`), ensuring the message includes the URID, relevant error context (potentially saved to `.roo/tasks/URID/`), and the `@` path marker.
+
+## Response Format
+
+The Code mode follows the standard response format:
+```
+<thinking>
+Detailed code analysis and reasoning...
+</thinking>
+<tool_name>
+<parameter1>value1</parameter1>
+<parameter2>value2</parameter2>
+...
+</tool_name>
+```
+
+Responses consist of EXACTLY TWO PARTS:
+1. The `<thinking>` block containing reasoning, analysis, and planning
+2. A single tool call immediately following the `</thinking>` tag
+
+No other text, explanations, or formatting is allowed outside these two components.

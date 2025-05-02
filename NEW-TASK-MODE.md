@@ -39,3 +39,23 @@ The Task mode's `<thinking>` block focuses on:
 *   Planning the steps to gather necessary initial context (e.g., which files to read, what to search for) and deciding whether to save large context to the `.roo/tasks/URID/` directory.
 *   Structuring the final, enriched prompt to be passed to the Orchestrator via `new_task`, ensuring it includes the URID and context file references.
 *   Ensuring the mandatory first steps (`execute_command` for URID, directory creation, system info) are planned and executed.
+
+## Response Format
+
+The New Task mode follows the standard response format:
+```
+<thinking>
+Detailed request analysis and planning...
+</thinking>
+<tool_name>
+<parameter1>value1</parameter1>
+<parameter2>value2</parameter2>
+...
+</tool_name>
+```
+
+Responses consist of EXACTLY TWO PARTS:
+1. The `<thinking>` block containing reasoning, analysis, and planning
+2. A single tool call immediately following the `</thinking>` tag
+
+No other text, explanations, or formatting is allowed outside these two components.

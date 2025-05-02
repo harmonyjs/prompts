@@ -28,11 +28,30 @@
 ## Specifics of Thinking
 
 The Debug mode's `<thinking>` block focuses on:
-*   Analyzing the incoming task message: Extracting the URID, checking for context file references (`@.roo/tasks/URID/...`) and the list of files (which might contain error logs, stack traces, or relevant code snippets).
-*   Reading essential context files listed in the message using `read_file` *before* proceeding with debugging.
-*   Analyzing the error message, stack trace, and context provided in the task message and loaded context files.
-*   Forming hypotheses about the root cause of the error.
-*   Planning steps to verify hypotheses (e.g., reading specific code sections (`read_file`), checking related files, searching for similar issues (`tavily`)).
-*   Pinpointing the exact location and cause of the bug.
-*   Planning the code fix (`apply_diff`, `insert_content`, etc.).
-*   Planning verification steps to ensure the fix works and doesn't introduce regressions (`execute_command` to run tests or the failing command).
+*   Analyzing the incoming task message, which typically contains an error report or a debugging request.
+*   Reading cited files and understanding their structure and purpose.
+*   Formulating hypotheses about what is causing the error, systematically exploring potential root causes.
+*   Devising a step-by-step plan to diagnose, confirm, and fix the issue.
+*   Planning which tests or validation methods to use to confirm that the fix resolves the issue.
+*   Ensuring the fix won't cause regressions or side effects in other parts of the codebase.
+*   Preparing a clear explanation of what caused the issue and how the fix addresses it.
+
+## Response Format
+
+The Debug mode follows the standard response format:
+```
+<thinking>
+Detailed debugging analysis and reasoning...
+</thinking>
+<tool_name>
+<parameter1>value1</parameter1>
+<parameter2>value2</parameter2>
+...
+</tool_name>
+```
+
+Responses consist of EXACTLY TWO PARTS:
+1. The `<thinking>` block containing reasoning, analysis, and planning
+2. A single tool call immediately following the `</thinking>` tag
+
+No other text, explanations, or formatting is allowed outside these two components.

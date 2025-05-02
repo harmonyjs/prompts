@@ -63,44 +63,36 @@ This strategy details a **decision tree** for using MCP servers:
 
 ## Specifics of Thinking
 
-The Orchestrator's `<thinking>` block concentrates on:
-*   Analyzing the incoming task message: Extracting the URID, checking for context file references (`@.roo/tasks/URID/...`) and the list of files.
-*   Reading essential context files listed in the message using `read_file` *before* proceeding with planning.
-*   Task decomposition into subtasks.
-*   Choosing a delegation strategy (which mode for which subtask).
-*   Determining the need for *additional* context gathering (using MCP servers like `context7`, `repomix`, `tavily`, or reading more files). If large context is gathered, plan to save it to the `.roo/tasks/URID/` directory using `write_to_file`.
-*   Selecting the appropriate mode for each subtask.
-*   Formulating the `message` for `new_task`, ensuring it includes the URID, relevant context (potentially referencing newly saved files in the task directory), the invocation tree, and the `@.roo/tasks/URID/` path marker.
-*   Analyzing the results (`<result>` tag content) of completed subtasks to decide the next step (proceed, re-delegate, adapt plan, ask user).
-*   Synthesizing results from different branches.
-*   Evaluating overall task completion against the original request.
+The Orchestrator mode's `<thinking>` block focuses on:
+*   Analyzing the incoming task message from the Task mode, including the URID and any context files.
+*   Reading essential context files listed in the message using `read_file` before proceeding with task decomposition.
+*   Considering if additional context is needed through `repomix`, `context7`, or `tavily` MCP tools.
+*   Analyzing the task complexity and decomposing it into logical subtasks.
+*   Identifying dependencies between subtasks and planning the execution order.
+*   Selecting the appropriate mode for each subtask based on its nature.
+*   Formulating clear, detailed instructions for each mode that will receive a delegated task.
+*   Tracking progress and integration points between completed subtasks.
+*   Planning how to synthesize results from all subtasks into a coherent whole.
 
-### Example of Structured Thinking
+## Response Format
 
+The Orchestrator mode follows the standard response format:
 ```
 <thinking>
-Analyzing the task of creating a user authentication API.
-
-1. Delegated subtasks and their status:
-   - Architect (design API structure): Completed ✅
-   - Code (implement login/registration routes): Completed ✅
-   - Code (implement protected routes): Completed ✅
-   - Test (test all routes): Completed ✅
-
-2. Synthesizing results:
-   - Architect designed the architecture using JWT, defined data structures and routes.
-   - Code implemented registration, login, validation, token issuance, and verification.
-   - Test confirmed the functionality of all routes and error handling.
-
-3. Compliance with the original task:
-   - ✅ Implemented authentication with login and password
-   - ✅ Implemented JWT token issuance
-   - ✅ Implemented token verification for protected routes
-   - ✅ Added error handling and data validation
-
-4. Conclusion: All aspects of the original task are satisfied. I can call attempt_completion.
+Detailed orchestration analysis and reasoning...
 </thinking>
+<tool_name>
+<parameter1>value1</parameter1>
+<parameter2>value2</parameter2>
+...
+</tool_name>
 ```
+
+Responses consist of EXACTLY TWO PARTS:
+1. The `<thinking>` block containing reasoning, analysis, and planning
+2. A single tool call immediately following the `</thinking>` tag
+
+No other text, explanations, or formatting is allowed outside these two components.
 
 ## Error Handling Decision Tree
 

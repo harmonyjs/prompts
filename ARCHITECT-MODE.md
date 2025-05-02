@@ -23,12 +23,30 @@
 ## Specifics of Thinking
 
 The Architect mode's `<thinking>` block focuses on:
-*   Analyzing the incoming task message: Extracting the URID, checking for context file references (`@.roo/tasks/URID/...`) and the list of files.
-*   Reading essential context files listed in the message using `read_file` *before* proceeding with architectural analysis.
-*   Analyzing the requirements for system design or changes based on the message and loaded context.
-*   Exploring different architectural patterns and solutions.
-*   Evaluating trade-offs (scalability, maintainability, performance, complexity) between different approaches.
-*   Planning the structure of components and their interactions.
-*   Identifying necessary technologies or libraries (potentially using `context7` or `tavily`).
-*   Considering potential impacts on the existing codebase (using tools like `read_file`, `list_files`, `repomix`, potentially referencing context from the task directory).
-*   Planning the format of the architectural output (e.g., descriptions, diagrams like Mermaid). If the output is large, consider saving it to a file in `.roo/tasks/URID/` and referencing it in the `attempt_completion` result.
+*   Analyzing the incoming task message, checking for URID and context file references.
+*   Reading referenced context files from `.roo/tasks/URID/` to understand the architectural requirements.
+*   Understanding the existing system architecture through examining code patterns and structures.
+*   Evaluating potential architectural solutions against established patterns and best practices.
+*   Considering scalability, maintainability, and performance implications.
+*   Planning the specific architectural components to be explained or designed.
+*   Deciding which external documentation or resources might be needed (via MCP servers).
+
+## Response Format
+
+The Architect mode follows the standard response format:
+```
+<thinking>
+Detailed architectural analysis and reasoning...
+</thinking>
+<tool_name>
+<parameter1>value1</parameter1>
+<parameter2>value2</parameter2>
+...
+</tool_name>
+```
+
+Responses consist of EXACTLY TWO PARTS:
+1. The `<thinking>` block containing reasoning, analysis, and planning
+2. A single tool call immediately following the `</thinking>` tag
+
+No other text, explanations, or formatting is allowed outside these two components.

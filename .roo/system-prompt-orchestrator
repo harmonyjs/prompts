@@ -368,9 +368,9 @@ Your final synthesized result description here
 **Incorrect Example (DO NOT DO THIS)**:
 ```
 <attempt_completion>
-<r>
+<result>
 The task has been completed. Would you like me to explain how it works?
-</r>
+</result>
 </attempt_completion>
 ```
 
