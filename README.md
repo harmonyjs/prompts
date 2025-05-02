@@ -10,7 +10,7 @@ This document describes a multi-agent intelligent system integrated into a next-
 
 - **Mode**: Specialized agents that perform various tasks during the development process. Each mode has unique capabilities and functions that allow it to perform its work effectively.
 
-- **System Prompt**: The main instruction that defines the behavior and capabilities of each mode-agent in Roo. It includes information about available tools, functions, and ways of interacting with the user.
+- **System Prompt**: The main instruction that defines the behavior and capabilities of each mode-agent in Roo. It includes information about available tools, functions, and ways of interacting with the user. **See [SYSTEM-PROMPTS.md](SYSTEM-PROMPTS.md) for a detailed explanation of their structure, formation, and best practices.**
 
 - **Tools**: Functions and APIs that can be used by mode-agents to perform tasks. Tools can include functions for working with code, APIs for interacting with external systems, and other useful resources. Tools are called using a special XML-like syntax that allows mode-agents to interact with them.
 
@@ -250,59 +250,63 @@ Example of what an `invocation tree` might look like:
 ```
 🆕 Refactor user authentication module
 └── 🪃 Orchestrate the refactoring process
+```
+
 ##### Example Workflow (Debug)
 
-    1.  **Receiving Task (from Code or Test):**
-        ```
-        🪲 Fix TypeError in calculateTotal
+1.  **Receiving Task (from Code or Test):**
+    ```
+    🪲 Fix TypeError in calculateTotal
 
-        Running tests (`npm test`) results in a TypeError: Cannot read properties of undefined (reading 'price') in the `calculateTotal` function in `src/utils.js` line 25.
+    Running tests (`npm test`) results in a TypeError: Cannot read properties of undefined (reading 'price') in the `calculateTotal` function in `src/utils.js` line 25.
 
-        Test Output Snippet:
-        ```
-        TypeError: Cannot read properties of undefined (reading 'price')
-            at calculateTotal (/Users/andreyvavilov/Projects/meta-prompts/src/utils.js:25:30)
-            at Object.<anonymous> (/Users/andreyvavilов/Projects/meta-prompts/test/utils.test.js:15:9)
-            ...
-        ```
+    Test Output Snippet:
+    ```
+    TypeError: Cannot read properties of undefined (reading 'price')
+        at calculateTotal (/Users/andreyvavilov/Projects/meta-prompts/src/utils.js:25:30)
+        at Object.<anonymous> (/Users/andreyvavilов/Projects/meta-prompts/test/utils.test.js:15:9)
+        ...
+    ```
 
-        Relevant files: `src/utils.js`, `test/utils.test.js`.
+    Relevant files: `src/utils.js`, `test/utils.test.js`.
 
-        🆕 Refactor user authentication module
-        └── 🪃 Orchestrate the refactoring process
-            └── 💻 Implement password hashing update
-                └── 🪲 Fix TypeError in calculateTotal
-                    ^ we are here
+    🆕 Refactor user authentication module
+    └── 🪃 Orchestrate the refactoring process
+        └── 💻 Implement password hashing update
+            └── 🪲 Fix TypeError in calculateTotal
+                ^ we are here
 
-        Please identify the cause of the TypeError and apply a fix. Verify the fix by running `npm test`.
-        ```
+    Please identify the cause of the TypeError and apply a fix. Verify the fix by running `npm test`.
+    ```
 
-    2.  **Analysis and Planning (`<thinking>`):**
-        ```xml
-        <thinking>
-        Task: Fix TypeError in `calculateTotal` (`src/utils.js:25`). Error 'Cannot read properties of undefined (reading 'price')'.
-        1. Hypothesis: The function receives an element without the `price` property, possibly `undefined` or an object of a different type. Likely due to incorrect test data or improper handling of the input array in the function itself.
-        2. Plan:
-           - Read `src/utils.js` lines 20-30 to see the `calculateTotal` code.
-           - Read `test/utils.test.js` lines 10-20 to see what data is passed in the test.
-           - Determine the cause: incorrect test data or lack of checking in the function.
-           - Apply the fix: either correct the test or add a check in `calculateTotal` (e.g., `item && item.price`).
-           - Run `npm test` to verify.
-        3. Start by reading `src/utils.js`.
-        </thinking>
-        ```
+2.  **Analysis and Planning (`<thinking>`):**
+    ```xml
+    <thinking>
+    Task: Fix TypeError in `calculateTotal` (`src/utils.js:25`). Error 'Cannot read properties of undefined (reading 'price')'.
+    1. Hypothesis: The function receives an element without the `price` property, possibly `undefined` or an object of a different type. Likely due to incorrect test data or improper handling of the input array in the function itself.
+    2. Plan:
+        - Read `src/utils.js` lines 20-30 to see the `calculateTotal` code.
+        - Read `test/utils.test.js` lines 10-20 to see what data is passed in the test.
+        - Determine the cause: incorrect test data or lack of checking in the function.
+        - Apply the fix: either correct the test or add a check in `calculateTotal` (e.g., `item && item.price`).
+        - Run `npm test` to verify.
+    3. Start by reading `src/utils.js`.
+    </thinking>
+    ```
 
-    3.  **Reading Files (Example Step):** Agent uses `<read_file><path>src/utils.js</path><start_line>20</start_line><end_line>30</end_line></read_file>`.
-        *(Code analysis)*
-        Then the agent uses `<read_file><path>test/utils.test.js</path><start_line>10</start_line><end_line>20</end_line></read_file>`.
-        *(Test analysis, identifying the problem - e.g., passing `[ { price: 10 }, undefined ]`)*
+3.  **Reading Files (Example Step):** Agent uses `<read_file><path>src/utils.js</path><start_line>20</start_line><end_line>30</end_line></read_file>`.
+    *(Code analysis)*
+    Then the agent uses `<read_file><path>test/utils.test.js</path><start_line>10</start_line><end_line>20</end_line></read_file>`.
+    *(Test analysis, identifying the problem - e.g., passing `[ { price: 10 }, undefined ]`)*
 
-    4.  **Applying Fix (Example Step):** The agent decides to add a check in the function and uses `<apply_diff>` to modify line 25 in `src/utils.js`.
+4.  **Applying Fix (Example Step):** The agent decides to add a check in the function and uses `<apply_diff>` to modify line 25 in `src/utils.js`.
 
-    5.  **Verifying Fix (Example Step):** The agent uses `<execute_command><command>npm test</command></execute_command>`.
-        *(Analysis of command output)*
+5.  **Verifying Fix (Example Step):** The agent uses `<execute_command><command>npm test</command></execute_command>`.
+    *(Analysis of command output)*
 
-    6.  **Completion:** If tests pass, the agent uses `<attempt_completion>`, describing the identified cause and the applied fix.
+6.  **Completion:** If tests pass, the agent uses `<attempt_completion>`, describing the identified cause and the applied fix.
+
+```
 │   ├── 🏗️ Design new authentication flow
 │   ├── 💻 Implement JWT token generation
 │   │   └── 🪲 Fix token expiration logic error
@@ -315,178 +319,6 @@ Example of what an `invocation tree` might look like:
 
 This tree shows that the initial refactoring task (🆕 Refactor...) was passed to the orchestrator (🪃 Orchestrate...). The orchestrator spawned tasks for the architect (🏗️ Design...), two tasks for the coder (💻 Implement...), and one for the tester (🔍 Test...). One of the coding tasks required debugging (🪲 Fix...), and the testing task also revealed two problems requiring debugging (🪲 Debug...), and we are currently in this last debug branch for the second problem.
 
-## System Prompts
-
-System prompts define the behavior and capabilities of each mode-agent in Roo. They include information about available tools, functions, and ways of interacting with the user. Each mode-agent has its own system prompt, stored in the corresponding file in `.roo/system-prompt-<mode>`.
-
-The original descriptions of all tools, base modes, MCP servers, etc., are stored in the `.roo/base-prompts/` directory. This serves as a knowledge base used to create system prompts for each mode-agent. Each mode-agent has its own system prompt, stored in the corresponding file in `.roo/system-prompt-<mode>`.
-
-### System Prompt Structure
-
-The system prompt consists of several main parts, structured according to the role and responsibility of the specific mode-agent. Let's examine the structure of prompts using the Orchestrator and New Task modes as examples:
-
-#### Orchestrator
-
-##### Example Workflow (Test)
-
-1.  **Receiving Task (from Orchestrator):**
-    ```
-    🔍 Test user profile update endpoint
-
-    The `code` mode has implemented the PUT /api/users/profile endpoint in `routes/users.js`. Please write and execute integration tests for this endpoint.
-
-    Context: Project uses Jest for testing. Test files are located in `test/`. The endpoint expects { name, email } and updates the authenticated user. Assume a test user exists and authentication middleware can be mocked or bypassed for testing routes.
-
-    🆕 Add user profile editing feature
-    └── 🪃 Orchestrate profile editing implementation
-        ├── 💻 Implement user profile update endpoint
-        └── 🔍 Test user profile update endpoint
-            ^ we are here
-
-    Create a new test file `test/users.profile.test.js`. Include tests for:
-    - Successful profile update (200 OK).
-    - Update with invalid email format (400 Bad Request).
-    - Update without authentication (401 Unauthorized - if applicable).
-    Execute the tests using `npm test`. If tests fail due to application code bugs, delegate to `debug`.
-    ```
-
-2.  **Analysis and Planning (`<thinking>`):**
-    ```xml
-    <thinking>
-    Task: Write and run integration tests for PUT /api/users/profile.
-    1. Plan:
-        - Create a new file `test/users.profile.test.js`.
-        - Write tests using Jest and `supertest` (assuming it's in the project):
-            - Test for successful update (POST with valid data, check status 200 and response).
-            - Test for invalid email (POST with invalid email, check status 400).
-            - Test for missing authentication (POST without token/session, check status 401).
-        - Use `write_to_file` to create the file with tests.
-        - Run tests via `execute_command npm test`.
-        - Analyze the result. If errors in application code - delegate to `debug`.
-    2. Start by creating the file `test/users.profile.test.js` with the basic test structure.
-    </thinking>
-    ```
-
-3.  **Creating Test File (Example Step):** Agent uses `<write_to_file>` to create `test/users.profile.test.js` with the test content.
-
-4.  **Running Tests (Example Step):** Agent uses `<execute_command><command>npm test -- test/users.profile.test.js</command></execute_command>`.
-    *(Agent receives command output)*
-
-5.  **Analyzing Results and Completion (Example Step):**
-    *   **If tests pass:** Agent uses `<attempt_completion>` with the message "Integration tests for PUT /api/users/profile successfully created and passed."
-    *   **If tests fail (error in application code):** Agent forms a message for the `debug` mode (including error output, invocation tree) and uses `<new_task><mode>debug</mode>...</new_task>`. After successful delegation, the agent uses `<attempt_completion>` with the message "Tests for PUT /api/users/profile created, but failed due to an error in the application code. The task to fix it has been delegated to the Debug mode."
-
-The Orchestrator prompt begins with a clear description of its role and responsibilities:
-
-```
-As an orchestrator, you should:
-
-1. When given a complex task, break it down into logical subtasks...
-2. For each subtask, use the `new_task` tool to delegate...
-3. Track and manage progress...
-...
-```
-
-This is followed by standardized sections:
-
-1. **TOOL USE**: Description of the tool usage format and a detailed list of available tools: `read_file`, `search_files`, `list_files`, `use_mcp_tool`, `ask_followup_question`, `attempt_completion`, `new_task`.
-
-2. **MCP USAGE STRATEGY**: A specific section for the Orchestrator, describing the strategy for using MCP servers to gather context before task decomposition.
-
-3. **MCP SERVERS**: Description of connected MCP servers (`context7`, `repomix`, `tavily`) and their tools.
-
-4. **CAPABILITIES**: List of the mode's capabilities, including access to tools for executing commands, working with files, and interacting with MCP servers.
-
-5. **MODES**: Description of available modes to which the Orchestrator can delegate tasks.
-
-6. **RULES**: Rules and limitations for the Orchestrator mode.
-
-7. **OBJECTIVE**: Final description of the goal and working methodology.
-
-#### New Task
-
-The New Task prompt has a different structure, oriented towards a more specific role:
-
-1. **YOUR GOAL**: Detailed description of the mode's main goal - analyzing the user's request, gathering context, formulating a high-quality prompt, and delegating the task.
-
-2. **Step-by-step process**: Detailed description of the workflow, starting with the mandatory first step (gathering system information) and ending with reporting the result.
-
-3. **TOOL USING**: Detailed description of tools with special emphasis on their use in the context of specific process steps.
-
-4. **OBJECTIVE**: Brief summary of the mode's goal and working methodology.
-
-5. **SYSTEM INFORMATION**: Basic information about the user's system, indicating the need to gather additional information.
-
-### General Principles of System Prompt Structuring
-
-Based on the examples considered, the following principles can be highlighted:
-
-1. **Role Orientation**: Each prompt begins with a clear definition of the mode-agent's role and responsibility.
-
-2. **Standardized Sections**: Despite structural differences, all prompts contain standard sections: description of tools, capabilities, rules, and goals.
-
-3. **Specialized Sections**: Depending on the mode's specifics, specialized sections may be added (e.g., MCP USAGE STRATEGY for Orchestrator).
-
-4. **Process Orientation**: Each prompt contains a description of the mode's workflow, but the level of detail may vary.
-
-5. **Tool Availability**: Clearly defines which tools are available to the mode and how to use them.
-
-6. **Hierarchical Binding**: The prompt indicates which modes can be called by the current mode via the `new_task` tool.
-
-### System Prompt Formation
-
-The process of forming a system prompt includes:
-
-1. **Composition from Base Prompts**: Basic components from `.roo/base-prompts/` (tools.md, objective.md, system-information.md, etc.) are combined and adapted.
-
-2. **Role Specialization**: Specific instructions and recommendations are added according to the mode's role.
-
-3. **Defining Tool Availability**: Specifies which tools and MCP servers are available.
-
-4. **Setting Delegation Rules**: Defines which modes can be called via `new_task`.
-
-5. **Establishing Rules and Limitations**: Specific rules and limitations for the mode are added.
-
-Thus, system prompts are carefully structured instructions that define the behavior, capabilities, and interaction of mode-agents within the Roo multi-agent system.
-
-#### Visualization of System Prompt Formation
-
-```mermaid
-graph TD
-    subgraph ".roo/base-prompts/"
-        A[tools.md]
-        B[objective.md]
-        C[system-information.md]
-        D[rules-code/...]
-        E[...]
-    end
-
-    subgraph "Specialization for Mode (e.g., Orchestrator)"
-        F{Composition & Adaptation}
-        G[Role & Responsibilities]
-        H[MCP USAGE STRATEGY]
-        I[Delegation Rules]
-        J[Specific Rules]
-    end
-
-    subgraph ".roo/system-prompt-orchestrator"
-        K[Final System Prompt]
-    end
-
-    A --> F;
-    B --> F;
-    C --> F;
-    D --> F;
-    E --> F;
-    F --> K;
-    G --> K;
-    H --> K;
-    I --> K;
-    J --> K;
-
-    style F fill:#f9f,stroke:#333,stroke-width:2px
-    style K fill:#ccf,stroke:#333,stroke-width:2px
-```
 ## Individual Tool Usage Scenarios
 
 Although all mode-agents have access to a certain set of tools, the nature and purpose of their use differ significantly depending on the mode's specialization.
@@ -516,133 +348,6 @@ Although all mode-agents have access to a certain set of tools, the nature and p
 - **Orchestrator** applies `use_mcp_tool` strategically, according to the `MCP USAGE STRATEGY`, to gather necessary context before decomposing the task into subtasks for other modes.
 
 - Some modes have limited use of the `new_task` tool. For example, Code can delegate tasks only to the Debug mode, while Orchestrator can delegate tasks to all modes.
-
-## Individual MCP Server Usage Scenarios
-
-MCP servers extend the capabilities of mode-agents by providing access to external resources and specialized tools. Different modes use them differently.
-
-### General Principles
-
-1. **Targeted Use**: Each mode accesses MCP servers with unique goals corresponding to its specialization.
-
-2. **Strategic Choice**: Modes choose a specific MCP server depending on the type of information or action needed:
-   - `context7` — for documentation and APIs;
-   - `repomix` — for analyzing codebases;
-   - `tavily` — for web searches;
-   - `browser-tools-mcp` — for debugging web applications.
-
-3. **Phased Process**: MCP server usage follows a general pattern:
-   - Identify need → Select server → Call tool → Process result
-
-### Key Examples
-
-- **Orchestrator** uses `context7` to obtain official documentation when the task mentions specific technologies (e.g., React, AWS SDK). First, `resolve-library-id` is called, followed by `get-library-docs`.
-
-- **Code** and **Debug** modes use `tavily` differently: Code searches for implementation examples and best practices, while Debug focuses on finding solutions for specific errors and debugging methods.
-
-- For complex codebase changes, the **Architect** mode might use `repomix` with the `pack_codebase` tool to create a compressed representation of the codebase, helping to understand inter-component relationships before designing architectural changes.
-
-The strategy for using MCP servers plays a critical role in enhancing the quality of mode-agent work, allowing them to obtain up-to-date information from external sources and make more informed decisions.
-
-## Usage Scenarios, Workflow Algorithm, and Decision Tree
-
-Each mode in Roo has its own workflow algorithm, which, although adapting to specific tasks (non-deterministic), follows certain patterns and principles. These algorithms are formalized in the modes' system prompts and define the sequence of actions, decision-making, and interaction with other modes.
-
-### General Concept of Mode Workflows
-
-The workflow algorithms of mode-agents are not just linear sequences of actions but complex adaptive processes that react to the task context and the results of previous actions. Although these algorithms are not fully deterministic, they follow specific patterns embedded in the system prompt.
-
-### Algorithmic Patterns of Modes
-
-#### Orchestrator
-
-#### Task Mode
-
-### Integrating Tools into Algorithms
-
-A crucial aspect of the algorithms is how they integrate tool usage into the sequence of steps. In system prompts, this is expressed as instructions on when and how to apply specific tools.
-
-#### Example: Task and the Mandatory First Step
-
-The Task mode's system prompt explicitly states that the first action must always be executing the command to gather system information:
-
-```
-MANDATORY First Step: Your very first action is ALWAYS to output the <execute_command> call for pwd && tree --gitignore && npx -y envinfo --markdown && npm run
-```
-
-This directly embeds the use of `execute_command` at the very beginning of the workflow algorithm.
-
-### MCP Usage Strategies in Algorithms
-
-```
-Overarching Principle: Proactive Context Gathering
-If fetching external context could reasonably improve the quality, accuracy, or safety of your plan or the instructions you delegate, you should prioritize doing so.
-```
-
-### Decision Trees in Algorithms
-
-Mode algorithms are not linear sequences of actions – they are complex decision trees where each decision is based on the results of previous actions.
-
-#### Example Decision Tree for Orchestrator Task Delegation
-
-```
-Analyze Task
-├── Is the task related to architecture?
-│   ├── YES → Delegate to Architect
-│   └── NO → Continue analysis
-├── Does the task require writing new code?
-│   ├── YES → Delegate to Code
-│   └── NO → Continue analysis
-├── Is the task related to fixing errors?
-│   ├── YES → Delegate to Debug
-│   └── NO → Continue analysis
-└── Is the task related to testing?
-    ├── YES → Delegate to Test
-    └── NO → Break down into subtasks and repeat analysis
-```
-
-### Specifics of Thinking in Different Modes
-
-### Example of Structured Thinking (Orchestrator)
-
-```
-<thinking>
-Analyzing the task of creating a user authentication API.
-
-1. Delegated subtasks and their status:
-   - Architect (design API structure): Completed ✅
-   - Code (implement login/registration routes): Completed ✅
-   - Code (implement protected routes): Completed ✅
-   - Test (test all routes): Completed ✅
-
-2. Synthesizing results:
-   - Architect designed the architecture using JWT, defined data structures and routes.
-   - Code implemented registration, login, validation, token issuance, and verification.
-   - Test confirmed the functionality of all routes and error handling.
-
-3. Compliance with the original task:
-   - ✅ Implemented authentication with login and password
-   - ✅ Implemented JWT token issuance
-   - ✅ Implemented token verification for protected routes
-   - ✅ Added error handling and data validation
-
-4. Conclusion: All aspects of the original task are satisfied. I can call attempt_completion.
-</thinking>
-```
-
-### Importance of Self-Analysis for System Reliability
-
-The self-analysis mechanisms in the Roo system perform several important functions:
-
-1. **Preventing Premature Completion**: A mode will not report task completion until it is certain that all aspects are fulfilled.
-
-2. **Ensuring Quality**: Critical evaluation of the result increases the likelihood of meeting user expectations.
-
-3. **Adapting to Failures**: If self-analysis reveals shortcomings, the mode can take additional actions or re-delegate the same subtask.
-
-4. **System Integrity**: Self-analysis ensures that each mode performs its role completely and correctly, which is critical for the functioning of the entire multi-agent system.
-
-Thus, thorough self-analysis before task completion is an important mechanism for ensuring the reliability and quality of the Roo system's work.
 
 ## Data Flows in the System
 
@@ -738,160 +443,9 @@ User → Task → Orchestrator → Debug → Orchestrator → Task → User
 
 In this simpler flow, the debugging request undergoes fewer transformations, but each step involves a deeper analysis of the problem and context.
 
-### Importance of Proper Data Flow Organization
-
-Clearly regulated data flows in the Roo system ensure:
-
-1. **Context Integrity**: All necessary information is transferred between modes.
-2. **Traceability**: It's possible to track how the request was transformed at each stage.
-3. **Informed Decisions**: Each mode has sufficient information to make decisions.
-4. **Effective Communication**: Modes "speak the same language" thanks to standardized formats.
-
 This approach to organizing data flows allows the Roo system to function effectively as a single organism, despite consisting of several specialized mode-agents with their own context windows.
 
 ## Best Practices for Creating System Prompts
 
-The effectiveness of the Roo multi-agent system directly depends on the quality of the system prompts for each mode. Based on experience optimizing and refactoring system prompts, several key principles and practical recommendations can be formulated.
+**(Moved to [SYSTEM-PROMPTS.md](SYSTEM-PROMPTS.md))**
 
-### Structuring System Prompts
-
-A well-structured system prompt should contain the following mandatory elements:
-
-1. **Header with emoji and clear mode name**:
-   ```
-   # 🪃 Orchestrator Mode
-   ```
-
-2. **"Role and Responsibilities" section** with a numbered list of the mode's main functions.
-
-3. **"TOOL USE" section** with a detailed description of the tool call format and a detailed description of each available tool.
-
-4. **Mode-specific sections** (e.g., "MCP USAGE STRATEGY" for Orchestrator).
-
-5. **"RULES" section** with clear behavioral rules, including subsections for various aspects of work:
-   - General principles
-   - Filesystem operations
-   - Task delegation
-   - User interaction
-
-6. **"OBJECTIVE" section** with a brief summary of the mode's goal and working methodology.
-
-### Critical Elements Requiring Special Attention
-
-When editing system prompts, special attention must be paid to the following critical elements:
-
-1. **Message structure for `new_task`**:
-   - Mandatory adherence to the format with emoji, short description, detailed instructions, context, invocation tree, and indication of the next step.
-   - Inclusion of an example of a correctly formatted message.
-
-2. **Concept of `invocation tree`**:
-   - Detailed description of the rules for forming and maintaining the invocation tree.
-   - Rules for marking the current position using "^ we are here".
-   - Example of a correctly formatted invocation tree.
-
-3. **Mechanisms for self-analysis and result evaluation**:
-   - Clear criteria for checking before calling `attempt_completion`.
-   - Checklists for verifying task completeness and quality.
-
-4. **Error handling and fault tolerance**:
-   - Limitation of retry attempts (maximum 3: 1 initial + 2 additional).
-   - Progressive error handling strategy: from clarifying instructions to choosing alternative approaches.
-   - Criteria for re-delegating a task or requesting information from the user.
-
-5. **Output formatting**:
-   - Strict rules on response structure (only `<thinking>` block and tool call).
-   - Prohibition of any additional text or formatting.
-   - Examples of correct and incorrect formatting.
-
-### Checklist for Verifying System Prompts
-
-When creating or updating a system prompt, it is recommended to check the following aspects:
-
-- [ ] **Completeness of information**: All necessary tools, rules, and processes are described without omissions.
-- [ ] **Structural consistency**: The prompt structure follows general principles but is adapted to the mode's specifics.
-- [ ] **Delegation instructions**: Clearly defined modes to which this mode can delegate tasks.
-- [ ] **Examples and samples**: Examples included for all critical aspects (message formats, invocation tree, etc.).
-- [ ] **Error handling mechanisms**: Strategies defined for various types of errors and unsatisfactory results.
-- [ ] **Formatting and readability**: Markdown formatting, emojis, headers, and other elements used to improve readability.
-- [ ] **Direct address to LLM**: Prompt written in the form of direct instructions in the second person ("You must...", "Your task is...").
-- [ ] **Balance of detail and brevity**: Information is detailed enough for understanding but not excessive.
-
-### Typical Problems and Their Solutions
-
-1. **Inconsistent formatting**:
-   - **Solution**: Use a unified formatting style with emojis, headers, and separators for all system prompts.
-
-2. **Missing or incomplete structure for delegation messages**:
-   - **Solution**: Always include a full description of the message structure for `new_task` with an example.
-
-3. **Insufficient error handling mechanisms**:
-   - **Solution**: Add detailed instructions for handling various types of errors, including limiting the number of retries.
-
-4. **Excessive redundancy**:
-   - **Solution**: Eliminate duplicate information while retaining critical instructions in multiple places for emphasis.
-
-5. **Lack of self-analysis**:
-   - **Solution**: Include clear criteria and checklists for self-analysis before task completion.
-
-By following these recommendations when creating and updating system prompts, the efficiency, reliability, and predictability of the Roo multi-agent system can be significantly improved.
-
-## Error Handling Mechanisms and Fault Tolerance
-
-The Roo system includes well-thought-out mechanisms for error handling and fault tolerance, embedded in the system prompts of each mode.
-
-### Types of Handled Errors
-
-The system distinguishes the following types of potential errors:
-
-- **Tool Call Errors**: Incorrect parameters (path, JSON), access errors, network errors when calling MCP, Roo system errors.
-
-- **Unsatisfactory Subtask Results**: When a subtask completes formally successfully (returns `<result>`), but analysis of this result shows that the subtask's goal was not achieved.
-
-- **Inability to Gather Information**: File not found, search yielded no results, MCP returned an error.
-
-- **Fundamental Task Unfeasibility**: The user's request is incorrect or impossible to fulfill (identified during the analysis phase).
-
-### Fault Tolerance Strategies
-
-#### Retry
-
-For correctable tool call errors (typos in paths, temporary network issues), up to 3 attempts are provided (1 initial + 2 retries). This is explicitly stated in the prompts, for example, in the Task mode:
-
-```
-If a previous tool call (for these tools) failed (due to parameter error or system issue from Roo), internally attempt to self-correct and decide on retrying up to two additional times (max 3 total attempts for that specific information gathering step).
-```
-
-#### Failure
-
-If retries are exhausted, the error is uncorrectable, or necessary information is unavailable, modes acknowledge failure:
-
-- **Task mode** uses the `complete_with_failure` tool to report the inability to complete the task.
-
-- **Orchestrator** may request additional information via `ask_followup_question` or adapt the plan.
-
-#### Re-delegation
-
-A strategy specific to the Orchestrator:
-
-```
-When a subtask completes, thoroughly analyze the <result> content provided. Determine if the subtask's outcome meets the requirements. Based on this analysis, decide the next step: delegate the next subtask, gather more information, ask the user for clarification, or potentially re-delegate the same subtask with modified instructions if the previous attempt was insufficient.
-```
-
-The Orchestrator can modify the instructions (`message` in `new_task`) and delegate the same or a similar subtask again, possibly to a different mode.
-
-#### Adapt Plan
-
-The Orchestrator can adapt its decomposition and delegation plan based on the results or errors of subtasks. This is possible due to the incremental approach, where the next subtask is chosen based on the results of the previous ones.
-
-### Criteria for Choosing Between Retry and Failure
-
-- **Retry** is attempted when:
-  - The error seems correctable (a typo in a parameter that the model can logically fix)
-  - The error might be temporary (network error)
-  - The number of attempts made is less than 3
-
-- **Failure** is acknowledged when:
-  - The error is fundamental (file/resource definitely does not exist)
-  - All 3 retry attempts are exhausted
-  - Information necessary to proceed cannot be gathered with available tools
-  - Initial analysis showed the task itself is unfeasible
