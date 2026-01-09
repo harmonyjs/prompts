@@ -5,8 +5,18 @@ This document details the structure, formation, and best practices for creating 
 ## 1. Introduction to System Prompts
 
 - **Definition**: A System Prompt is the core instruction set provided to the underlying Language Model (LLM) to configure it as a specific Roo mode-agent. It dictates the agent's role, available tools, interaction rules, delegation capabilities, and overall objective within the software development workflow.
+
 - **Location**: Each mode-agent's system prompt is stored in a dedicated file within the `.roo/` directory, following the pattern `.roo/system-prompt-<mode-id>` (e.g., `.roo/system-prompt-orchestrator`).
-- **Relationship to Base Prompts**: The final system prompts (like `.roo/system-prompt-orchestrator`) are *manually constructed and maintained* by drawing upon and adapting the content found in the foundational instruction files within the `.roo/base-prompts/` directory (e.g., `tools.md`, `rules.md`). These base prompts serve as **source material or templates** during the prompt engineering process to ensure consistency. **There is no automatic inclusion or template engine mechanism (like `{{include}}`) involved; the content from base prompts is copied and potentially modified within each final system prompt file.** This modular *sourcing* approach promotes consistency and maintainability.
+
+- **Relationship to Base Prompts and Specifications**: The final system prompts (like `.roo/system-prompt-orchestrator`) are *manually constructed and maintained* by drawing upon and adapting the content found in:
+    a. the foundational instruction files within the `.roo/base-prompts/` directory;
+    b. the specification for that mode in <MODE>-MODE.md file. 
+    c. the `SYSTEM-PROMPTS.md` file, which outlines the general principles and best practices for system prompt creation (this file).
+    d. the `README.md` file, which provides an overview of the system architecture and design principles.
+    
+    **Note: there is no automatic inclusion or template engine mechanism (like `{{include}}`) involved; the content from these sources is copied and potentially modified within each final system prompt file.** 
+    
+    This modular *sourcing* approach promotes consistency and maintainability.
 
 ## 2. System Prompt Structure
 
@@ -100,7 +110,7 @@ Placeholder for basic system information, highlighting the need to gather more v
 
 Creating an effective system prompt involves several steps, leveraging the base prompts and adding mode-specific logic:
 
-1.  **Sourcing from Base Prompts**: When creating or updating a specific system prompt (e.g., for Orchestrator), start by **copying and pasting** relevant sections from the foundational component files in `.roo/base-prompts/` (e.g., the tool definitions from `tools.md`, general rules from `rules.md`). These base files provide the common language and definitions to ensure consistency across different modes. **This is a manual copy-and-adapt process, not an automated include.**
+1.  **Sourcing from Base Prompts**: When creating or updating a specific system prompt (e.g., for Orchestrator), start by **looking into** relevant sections from the foundational component files in `./base-prompts/` (e.g., the tool definitions from `tools.md`). These base files provide the core definitions to ensure consistency across different modes. **This is a manual copy-and-adapt process, not an automated include.**
 2.  **Role Specialization**: Add specific instructions, responsibilities, and workflow descriptions tailored to the mode's unique role (e.g., the detailed step-by-step process for New Task, the decomposition/delegation logic for Orchestrator).
 3.  **Defining Tool Availability**: Explicitly list the tools (standard and MCP) available to *this specific mode*. Remove definitions for tools the mode should not access.
 4.  **Setting Delegation Rules**: Clearly define which other modes can be invoked using the `new_task` tool within the `MODES` or `RULES` section.
